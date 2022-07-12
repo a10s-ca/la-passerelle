@@ -37,11 +37,29 @@ async function postToWordPress(postType, wordpressPostId, title, acf) {
     return response;
 }
 
-// handling the actual sync operation
+// determing which records should be synced
+// TODO validate other parameters before starting?
+let table = base.getTable(params.airtable.table);
+let records = [];
 if (params.syncType == 'record') {
-    // TODO validate other parameters before starting?
-    let table = base.getTable(params.airtable.table);
+    console.log("Type de synchronisation: record (un seul enregistrement)");
     let record = await table.selectRecordAsync(params.airtable.recordId);
+    records = [record];
+} else if (params.syncType == 'table') {
+    console.log("Type de synchronisation: table (la table en entier)");
+    let query = await table.selectRecordsAsync();
+    records = query.records;
+} else if (params.syncType == 'view') {
+    console.log("Type de synchronisation: view (une vue)");
+    let view = await table.getView(params.airtable.view);
+    let query = await view.selectRecordsAsync();
+    records = query.records;
+} else {
+    console.log("Type de synchronisation inconnue (rien ne sera synchronisé.");
+};
+
+// do the actual sync on all relevant records
+for (let record of records) {
     let wordpressPostId = record.getCellValueAsString(params.airtable.wpIdField);
 
     let acf = {};
@@ -51,7 +69,6 @@ if (params.syncType == 'record') {
 
     let response = await postToWordPress(params.wordpress.postType, wordpressPostId, record.getCellValueAsString(params.airtable.titleField), acf)
     await table.updateRecordAsync(record, { [params.airtable.wpIdField]: response.id.toString()});
+}
 
-} else {
-    console.log("Unknown syncType.");
-};
+console.log("Terminé");
