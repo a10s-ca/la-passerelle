@@ -34,8 +34,8 @@ Il s’agit donc essentiellement de développer des scripts dans Airtable qui in
 
 L'utilisation de Répète demande de compléter les étapes suivantes:
 
-* 1. Préparer l'instance WordPress qui recevra les données.
-* 2. Préparer la base Airtable qui émettra les données.
+1. Préparer l'instance WordPress qui recevra les données.
+2. Préparer la base Airtable qui émettra les données.
 
 ### 1. Préparer l'instance WordPress
 
