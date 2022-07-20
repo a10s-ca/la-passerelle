@@ -62,11 +62,7 @@ Enfin, il faut créer un usager et son mot de passe pour le script Airtable. Les
 
 Pour réaliser les synchronisations, il est nécessaire d'installer le script de synchronisation principal dans la base Airtable qui contient les données maîtres.
 
-{% note %}
-
-**Note:** Il est possible de configurer et d'utiliser le script de synchronisation de plusieurs façons dans Airtable. Nous présentons ici l'approche que nous préconisons, et qui consiste à copier le code principal _une seule fois_ dans Airtable, puis de l'appeler depuis des extensions et des automatisations. Si vous comprenez bien le fonctionnement du code, les enjeux de sécurité, et les outils disponibles dans Airtable, vous pouvez faire des choix différents.
-
-{% endnote %}
+> **Note:** Il est possible de configurer et d'utiliser le script de synchronisation de plusieurs façons dans Airtable. Nous présentons ici l'approche que nous préconisons, et qui consiste à copier le code principal _une seule fois_ dans Airtable, puis de l'appeler depuis des extensions et des automatisations. Si vous comprenez bien le fonctionnement du code, les enjeux de sécurité, et les outils disponibles dans Airtable, vous pouvez faire des choix différents.
 
 #### 2.1. Créer une automatisation déclenchée par un lien HTTP («webhook»)
 
@@ -110,11 +106,7 @@ Ensuite, il suffit d'exécuter le script de test en cliquant sur le bouton «Run
 
 ![Saisie d'écran de l'extension Scripting de Airtable](images/airtable2.4.png)
 
-{% note %}
-
-**Note:** Vous pouvez supprimer l'extension utilisée pour le test, elle ne sera plus utile.
-
-{% endnote %}
+> **Note:** Vous pouvez supprimer l'extension utilisée pour le test, elle ne sera plus utile.
 
 #### 2.5. Compléter les configurations des variables de paramétrage du script
 
