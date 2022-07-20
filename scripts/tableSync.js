@@ -1,7 +1,6 @@
-const webhookUrl = 'https://hooks.airtable.com/workflows/v1/genericWebhook/appsED4vVIGejT2uw/wflHitpDRkP0HP2OF/wtr2Px6U0jIWN0ANQ';
+const webhookUrl = '{{URL}}';
 
 let table = base.getTable('Artistes');
-let artiste = await input.recordAsync('Pour quel artiste?', table);
 
 var config = {};
 
@@ -9,10 +8,9 @@ var config = {};
 // pass it serialized to the automation script, which will deserialize it. This is because Airtable will not
 // allow us to use specific keys in automation script config.
 config.params = JSON.stringify({
-    syncType: 'record',
+    syncType: 'table',
     airtable: {
         table: 'Artistes',
-        recordId: artiste.id,
         wpIdField: 'Identifiant WordPress',
         titleField: 'Identification'
     },
