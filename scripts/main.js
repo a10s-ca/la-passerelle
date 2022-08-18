@@ -64,7 +64,11 @@ for (let record of records) {
 
     let acf = {};
     for (const field of Object.keys(params.wordpress.acf)) {
-        acf[field] = record.getCellValueAsString(params.wordpress.acf[field])
+        switch(field.type) {
+            default: // 'singleLineText', 'multilineText', 'email', 'url', 'singleSelect', 'phoneNumber', 'formula', 'rollup', 'date, 'dateTime'
+                acf[field] = record.getCellValueAsString(params.wordpress.acf[field]);
+                break;
+        };
     };
 
     let response = await postToWordPress(params.wordpress.postType, wordpressPostId, record.getCellValueAsString(params.airtable.titleField), acf)
