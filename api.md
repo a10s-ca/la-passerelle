@@ -2,7 +2,7 @@
 
 ## Types de champs supportés
 
-Les types de champs supportés par le script sont les suivantes
+Les types de champs supportés par le script sont les suivants:
 
 |Type Airtable|Correspondace ACF suggérée|Notes|
 |------------|------------|------------|
