@@ -147,3 +147,7 @@ L'approche est similaire à l'exemple 3.1, sauf pour le champ `Button`, non pert
 #### 3.3. Synchroniser le contenu d'une vue de façon récurrente à tous les jours, à la même heure.
 
 Dans ce cas, il est suggéré de créer une automatisation avec un déclencheur périodique. L'action de l'automatisation sera l'exécution d'un script, dont le contenu sera inspiré de  [viewSync.js](scripts/viewSync.js).
+
+## Références
+
+La page dédiée à l'[API](api.md) contient les références détaillées sur les options du script, le types de champs, etc.
