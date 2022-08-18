@@ -1,10 +1,10 @@
-# Répète
+# La passerelle
 
 ## À propos
 
 Alors qu’Airtable est de plus en plus utilisé par les organisations culturelles, les besoins d’interaction entre ce système de gestion de bases de données et le CMS WordPress sont grandissants. Qu’il s’agisse de publier un répertoire de membres, d’oeuvres ou de spectacles sur le web, le besoin d’allier la simplicité de gestion des données d’Airtable avec les fonctionnalités de publication de contenu de WordPress sont fréquents.
 
-C’est pour répondre à ce genre de besoins que RAPAIL développe un coffre à outils pour l’intégration de WordPress et Airtable. RAPAIL souhaite évidemment répondre à ses propres besoins. Elle souhaite également faire profiter la communauté culturelle québécoise des travaux qu’elle entreprend.
+C’est pour répondre à ce genre de besoins que [RAPAIL](https://rapail.ca/) développe La passerelle: un coffre à outils pour l’intégration de WordPress et Airtable. RAPAIL souhaite évidemment répondre à ses propres besoins. Elle souhaite également faire profiter la communauté culturelle québécoise des travaux qu’elle entreprend.
 
 Le présent dépôt de code contient des extraits de scripts Airtable utilisés par RAPAIL pour synchroniser les données de sa base Airtable avec son site web sous WordPress. Ce code, qui s’appuie sur différentes principes pour répondre à une série de besoins tout en répondant à des contraintes, est complété par une documentation offrant des scénarios d’utilisation en réponse à des besoins types.
 
@@ -32,7 +32,7 @@ Il s’agit donc essentiellement de développer des scripts dans Airtable qui in
 
 ## Installation
 
-L'utilisation de Répète demande de compléter les étapes suivantes:
+L'utilisation de La passerelle demande de compléter les étapes suivantes:
 
 1. Préparer l'instance WordPress qui recevra les données.
 2. Préparer la base Airtable qui émettra les données.
@@ -43,7 +43,7 @@ L'utilisation de Répète demande de compléter les étapes suivantes:
 
 Les données provenant d'Airtable porteront probablement sur différents types d'entités (des personnes, des oeuvres, des événements), et elles devront être décrites dans des contenus plus sophistiqués que des articles (des «posts»). Ces données contiendront probablement plusieurs champs, bien au-delà d'un simple titre et d'une description. Votre instance WordPress doit donc disposer d'extensions compatibles avec l'API JSON de WordPress pour gérer ces deux besoins.
 
-Les scripts de Répète ont été testés et sont fonctionnels avec les extensions suivantes:
+Les scripts de La passerelle ont été testés et sont fonctionnels avec les extensions suivantes:
 
 * [Custom Post Type UI (CPT UI)](https://fr.wordpress.org/plugins/custom-post-type-ui/) pour la gestion des types de contenus
 * [Advanced Custom Fields (ACF)](https://fr.wordpress.org/plugins/advanced-custom-fields/)
