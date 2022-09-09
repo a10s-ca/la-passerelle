@@ -140,7 +140,7 @@ Des exemples pour des cas d'utilisation communs suivent. Dans tous les cas, les 
 
 Pour ce cas de figure, l'approche suggérée est de créer une extension qui permet de sélectionner un enregistrement (avec `input.recordAsync`). L'extension peut être déclenchée par un champ de type «Button» au besoin. L'extension doit contenir un script inspiré de l'exemple [recordSync.js](scripts/recordSync.js).
 
-#### 3.2. Synchroniser manuellement un table en entier
+#### 3.2. Synchroniser manuellement une table en entier
 
 L'approche est similaire à l'exemple 3.1, sauf pour le champ `Button`, non pertinent dans ce cas-ci. Le script à utiliser est  [tableSync.js](scripts/tableSync.js).
 
