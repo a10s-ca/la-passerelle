@@ -8,8 +8,11 @@ let APIBASE = WORDPRESSINSTANCEURL + "wp-json/wp/v2/";
 let WORDPRESSUSERNAME = config.wordpressUserName;
 let APPLICATIONPASSWORD = config.applicationPassword;
 
-// Default values for optional parameters
-const DEFAULT_META_FIELD_NAME = 'meta'
+// Determining values for optional parameters
+const metaFieldName = params.airtable.metaFieldName || 'meta';
+const wordPressIdFieldName = params.airtable && params.airtable.wpIdField; // will be null if the user does not want to use that field
+const wordPressUrlFieldName = params.airtable && params.airtable.wpUrlField; // will be null if the user does not want to use that field
+const lastSyncFieldName = params.airtable && params.airtable.lastSyncFieldName; // will be null if the user does not want to use that field
 
 // we cannot use btoa in automations; this is a replacement taken from http://jsfiddle.net/1okoy0r0
 function b2a(a) {
@@ -42,13 +45,11 @@ async function postToWordPress(postType, wordpressPostId, title, acf) {
 
 // returns an object containing the Passerelle meta data in a record
 function getMeta(record) {
-    let metaFieldName = params.airtable.metaFieldName || DEFAULT_META_FIELD_NAME;
     return JSON.parse(record.getCellValueAsString(metaFieldName) || '{}');
 }
 
 // serializes a Passerelle meta object and saves it to the record
 async function setMeta(record, meta) {
-    let metaFieldName = params.airtable.metaFieldName || DEFAULT_META_FIELD_NAME;
     let updateParams = {};
     updateParams[metaFieldName] = JSON.stringify(meta);
     await table.updateRecordAsync(record, updateParams);
@@ -91,26 +92,31 @@ async function deleteWordPressMedia(mediaId) {
 }
 
 // wrapper for WordPress media API, including business logic for updates
+// returns updated meta for the field
 async function findOrCreateWordpressAttachment(table, record, fieldName) {
-    let media = record.getCellValue(fieldName)[0]; // we use the first attachment only; support for galleries may be implemented later
+    let medias = record.getCellValue(fieldName);
+    let media = null;
+    if (medias && medias.length > 0) media = medias[0]; // we use the first attachment only; support for galleries may be implemented later
 
     // Figure out if we already have created the media in WordPress, and whether it has
     // changed since then
     let meta = getMeta(record);
     if (!meta.attachments) meta.attachments = {};
     let attachment = meta.attachments[fieldName]; // will be undefined if there is no info about the attachment
-    let oldAttachementWordPressMediaId = attachment.wordPressMediaId;
+    let oldAttachementWordPressMediaId = attachment && attachment.wordPressMediaId;
     let action = '';
-    if (typeof attachment == 'undefined') {
+    if (typeof attachment == 'undefined' && media) {
         action = 'create';
-    } else if (attachment.airtableMediaId != media.id) {
+    } else if (media && attachment && attachment.airtableMediaId != media.id) {
         action = 'update';
+    } else if (attachment && attachment.airtableMediaId && !media) {
+        action = 'delete';
     } else {
         action = 'nothing';
     }
 
     // For create or update actions, we need to create a new image in the WordPress media library,
-    // because the WordPress does not allow updating the actual file in a media (the REST API
+    // because the WordPress API does not allow updating the actual file in a media (the REST API
     // doc is not clear about that, but all requests I tried did not change the media, and I saw
     // comments from people with a similar problem on the web)
     if (['create', 'update'].includes(action)) {
@@ -119,17 +125,21 @@ async function findOrCreateWordpressAttachment(table, record, fieldName) {
 
         // update the record with the new meta
         meta.attachments[fieldName] = { airtableMediaId: media.id, wordPressMediaId: response.id };
-        await setMeta(record, meta);
 
         // if we are updating a post (ie. changing the image), then we delete the old attachment
         if (action == 'update') await deleteWordPressMedia(oldAttachementWordPressMediaId)
           // TODO : make deletion decision based on an option?
 
-        return response.id;
+        return meta;
+
+    } else if (action == 'delete') {
+        await deleteWordPressMedia(oldAttachementWordPressMediaId);
+        delete meta.attachments[fieldName];
+        return meta;
 
     // if the image has not changed, we have nothing to do, but still want to return the media id
     } else if (action == 'nothing') {
-        return attachment.wordPressMediaId;
+        return meta;
     }
 
     return null; // should not happen; all previous ifs end with a return
@@ -158,15 +168,19 @@ if (params.syncType == 'record') {
 
 // do the actual sync on all relevant records
 for (let record of records) {
-    let wordpressPostId = record.getCellValueAsString(params.airtable.wpIdField);
+    let meta = getMeta(record);
+    let wordpressPostId = (meta.wordPressResponse && meta.wordPressResponse.id) || '';
 
     let acf = {};
     for (const acfFieldName of Object.keys(params.wordpress.acf)) {
         let field = table.getField(params.wordpress.acf[acfFieldName]);
         switch(field.type) {
             case 'multipleAttachments':
-                let attachmentId = await findOrCreateWordpressAttachment(table, record, params.wordpress.acf[acfFieldName]);
-                if (attachmentId) acf[acfFieldName] = attachmentId;
+                let newMeta = await findOrCreateWordpressAttachment(table, record, params.wordpress.acf[acfFieldName]);
+                if (newMeta) {
+                    meta = newMeta;
+                    acf[acfFieldName] = meta.attachments[params.wordpress.acf[acfFieldName]] && meta.attachments[params.wordpress.acf[acfFieldName]].wordPressMediaId;
+                }
                 // TODO: else?
                 break;
             default: // 'singleLineText', 'multilineText', 'email', 'url', 'singleSelect', 'phoneNumber', 'formula', 'rollup', 'date, 'dateTime'
@@ -175,8 +189,16 @@ for (let record of records) {
         };
     };
 
+    // perform the actual update to WordPress
     let response = await postToWordPress(params.wordpress.postType, wordpressPostId, record.getCellValueAsString(params.airtable.titleField), acf)
-    await table.updateRecordAsync(record, { [params.airtable.wpIdField]: response.id.toString()});
+    console.log(response);
+
+    // update meta information in the record, as well as optional fields for details
+    meta.wordPressResponse = response;
+    await setMeta(record, meta);
+    if (wordPressIdFieldName) await table.updateRecordAsync(record, { [wordPressIdFieldName]: response.id.toString() });
+    if (wordPressUrlFieldName) await table.updateRecordAsync(record, { [wordPressUrlFieldName]: response.link });
+    if (lastSyncFieldName) await table.updateRecordAsync(record, { [lastSyncFieldName]: response.modified_gmt + 'Z' }); // the WordPress response does not include Z!
 }
 
 console.log("Terminé");

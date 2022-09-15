@@ -95,7 +95,7 @@ Pour compléter la configuration de la quatrième variable, des données de test
 
 Nous suggérons de créer une extension dédiée à ce test. Pour ce faire:
 
-* retournez à l'interface principale de votre baes en cliquant sur «Data» dans la barre d'outil du haut de l'écran
+* retournez à l'interface principale de votre base en cliquant sur «Data» dans la barre d'outil du haut de l'écran
 * cliquez sur «Extensions»
 * cliquez sur «+ Add an extension», choisissez l'extension «Scripting», puis cliquez sur «Add extension»
 * la fenêtre d'édition de script apparaîtra. Au besoin, fermez la fenêtre de présentation en cliquant sur «Get Started», puis «Start from scratch»
@@ -128,11 +128,21 @@ Pour activer l'automatisation, il suffit de cliquer sur le bouton rouge indiquan
 
 ## Utilisation
 
+### Généralités
+
 Les outils de synchronisation devra être personnalisée selon vos besoins.
 
 Il s'agit essentiellement de créer des extensions (pour les synchronisation déclenchées manuellement) ou des automatisations (pour les synchronisations déclenchées de façon périodique, ou en réaction à un déclencheur externe à la base de données) qui utiliseront le script principal, en lui envoyant des paramètres qui permettront de faire des choix sur les données à synchroniser (la table, les champs et les enregistrements ciblés, et les correspondances avec les éléments équivalents dans WordPress).
 
 Dans tous les cas, il s'agit de faire un appel au lien HTTP («webhook»), comme à l'étape 2.4, en utilisant des valeurs adaptées dans la variable `params`. Les options de la variable `params` sont documentées dans la section [API](api.md). Le lien HTTP peut être appelé depuis une extension, une automatisation, ou même une application externe.
+
+
+### Éléments requis dans la table à synchroniser
+
+La Passerelle doit stocker certaines métadonnées relatives aux informations disponibles dans WordPress et dans Airtable et pour garder des traces des identifiants de contenus et de médias dans les deux système. Il est donc essentiel de prévoir un champ de type «Long text» dans les tables à synchroniser. Par défaut, le script cherche les données dans un champ nommé «meta», mais il est possible de spécifier un autre nom de champ. Cette option, et d'autres options liées à la consignation de métadonnées de la synchroniser (date de dernière synchronisation, URL du contenu dans WordPress, etc.), sont documentées dans la section [API](api.md).
+
+
+### Exemples de scripts
 
 Des exemples pour des cas d'utilisation communs suivent. Dans tous les cas, les scripts contiennent des références à des tables et des champs fictifs: vous devez les modifier pour tenir compte de votre base de données.
 
