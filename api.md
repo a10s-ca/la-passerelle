@@ -88,3 +88,7 @@ Les types de champs supportés par le script sont les suivants:
 |date|Date Picker||
 |dateTime|Date Time Picker||
 |multipleAttachments (une seule image jointe)|Image|Seuls les champs contenant une seule pièce jointe, dans un format d'image connu (jpg, jpeg, png, gif, svg, ico, webp)|
+
+## Statut des contenus dans WordPress
+
+Par défaut, la Passerelle crée des contenus en état brouillon dans WordPress. Il est possible de choisir l'état des contenus créés avec la clé `wordpress.status` des paramètres. Les valeurs acceptées sont `publish`, `future`, `draft`, `pending` et `private`.

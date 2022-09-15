@@ -13,6 +13,7 @@ const metaFieldName = params.airtable.metaFieldName || 'meta';
 const wordPressIdFieldName = params.airtable && params.airtable.wpIdField; // will be null if the user does not want to use that field
 const wordPressUrlFieldName = params.airtable && params.airtable.wpUrlField; // will be null if the user does not want to use that field
 const lastSyncFieldName = params.airtable && params.airtable.lastSyncFieldName; // will be null if the user does not want to use that field
+const wordPressStatus = params.wordpress && params.wordpress.status || 'draft';
 
 // we cannot use btoa in automations; this is a replacement taken from http://jsfiddle.net/1okoy0r0
 function b2a(a) {
@@ -29,7 +30,8 @@ async function postToWordPress(postType, wordpressPostId, title, acf) {
         method: 'POST',
         body: JSON.stringify({
             "title": title,
-            "acf": acf
+            "acf": acf,
+            status: wordPressStatus
         }),
         headers: {
             'Authorization': "Basic " + b2a(WORDPRESSUSERNAME + ":" + APPLICATIONPASSWORD),
