@@ -45,6 +45,32 @@ async function postToWordPress(postType, wordpressPostId, title, acf) {
     return response;
 }
 
+// Generic wrapper for WordPress API for any "model" (post type or taxonomy) that has "terms" (post
+// or term) with a name. Returns the ID. Mostly used for relation fields.
+async function postOrFindModelTermToWordpress(modelName, term) {
+    let request = {
+        method: 'POST',
+        body: JSON.stringify({
+            "name": term
+        }),
+        headers: {
+            'Authorization': "Basic " + b2a(WORDPRESSUSERNAME + ":" + APPLICATIONPASSWORD),
+            'Content-Type': 'application/json'
+        }
+    };
+
+    let url = APIBASE + modelName.replaceAll('-', '_');
+        // we need .replaceAll('-', '_') because taxonomy names can contain dashes, but not API routes
+    let createdTerm = await fetch(url, request);
+    let response = await createdTerm.json();
+
+    if (response.data && response.data.status == 400) {
+        response.id = response.additional_data[0];
+    };
+
+    return response.id;
+}
+
 // returns an object containing the Passerelle meta data in a record
 function getMeta(record) {
     return JSON.parse(record.getCellValueAsString(metaFieldName) || '{}');
@@ -147,6 +173,33 @@ async function findOrCreateWordpressAttachment(table, record, fieldName) {
     return null; // should not happen; all previous ifs end with a return
 }
 
+// This functions will find or create the ID of a "term" in a related "model". The "model"
+// can either be a custom post type, or a taxonmy (they are handled in the same way by the
+// WordPress REST API).
+async function findOrCreateModelTermId(modelName, term, meta) {
+    if (!meta['models']) meta['models'] = {};
+    if (!meta['models'][modelName]) meta['models'][modelName] = {};
+    if (!meta['models'][modelName][term] || !(typeof(meta['models'][modelName][term]) == 'number')) {
+        let modelTermId = await postOrFindModelTermToWordpress(modelName, term);
+        meta['taxonomies'][modelName][term] = modelTermId;
+    };
+    return meta['models'][modelName][term];
+};
+
+// A "related model" can be a custom post type, or it can be a taxonomy. Both are
+// managed with the same paths and verbs in the REST API. This function can thus
+// be used to manage relations in general, and has been tested with taxonomies.
+async function findOrCreateRelatedModels(field, record, wordpressDetails, meta) {
+    let modelName = wordpressDetails.model;
+    let res = [];
+    if (field.type == 'multipleSelects') {
+        (record.getCellValue(field) || []).forEach(async(term) => {
+            res.push(await findOrCreateModelTermId(modelName, term.name, meta));
+        })
+    };
+    return res;
+}
+
 // determing which records should be synced
 // TODO validate other parameters before starting?
 let table = base.getTable(params.airtable.table);
@@ -175,18 +228,39 @@ for (let record of records) {
 
     let acf = {};
     for (const acfFieldName of Object.keys(params.wordpress.acf)) {
-        let field = table.getField(params.wordpress.acf[acfFieldName]);
+        // determine what the configs for that acf are
+        var airtableFieldName;
+        let wordpressDetails = { relation: false };
+        if (typeof(params.wordpress.acf[acfFieldName]) == 'string') {
+            airtableFieldName = params.wordpress.acf[acfFieldName];
+        } else {
+            airtableFieldName = params.wordpress.acf[acfFieldName].field;
+            wordpressDetails.model = params.wordpress.acf[acfFieldName].model;
+        }
+
+        // get the Airtable field and process it
+        let field = table.getField(airtableFieldName);
         switch(field.type) {
             case 'multipleAttachments':
-                let newMeta = await findOrCreateWordpressAttachment(table, record, params.wordpress.acf[acfFieldName]);
+                let newMeta = await findOrCreateWordpressAttachment(table, record, airtableFieldName);
                 if (newMeta) {
                     meta = newMeta;
-                    acf[acfFieldName] = meta.attachments[params.wordpress.acf[acfFieldName]] && meta.attachments[params.wordpress.acf[acfFieldName]].wordPressMediaId;
+                    acf[acfFieldName] = meta.attachments[airtableFieldName] && meta.attachments[airtableFieldName].wordPressMediaId;
                 }
                 // TODO: else?
+                // TODO we could make this cleaner by passing the value-as-reference meta var to findOrCreateWordpressAttachment and deal with updating meta within that function
+                break;
+            case 'multipleSelects':
+                if (wordpressDetails.model) {
+                    let relatedModels = await findOrCreateRelatedModels(field, record, wordpressDetails, meta);
+                    if (relatedModels && relatedModels.length > 0) acf[acfFieldName] = relatedModels;
+                } else {
+                    acf[acfFieldName] = record.getCellValueAsString(airtableFieldName);
+                }
                 break;
             default: // 'singleLineText', 'multilineText', 'email', 'url', 'singleSelect', 'phoneNumber', 'formula', 'rollup', 'date, 'dateTime'
-                acf[acfFieldName] = record.getCellValueAsString(params.wordpress.acf[acfFieldName]);
+                let value = record.getCellValueAsString(airtableFieldName);
+                if (value && value.length > 0) acf[acfFieldName] = value;
                 break;
         };
     };

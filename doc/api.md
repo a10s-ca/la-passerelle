@@ -88,7 +88,83 @@ Les types de champs supportés par le script sont les suivants:
 |date|Date Picker||
 |dateTime|Date Time Picker||
 |multipleAttachments (une seule image jointe)|Image|Seuls les champs contenant une seule pièce jointe, dans un format d'image connu (jpg, jpeg, png, gif, svg, ico, webp)|
+|multipleSelects|Option 1: Text|Le comportement sera identique à un champs _singleSelect_. Aucune configuration supplémentaire n'est nécessaire|
+||Option 2: Taxonomy|Cette option permet d'interagir avec les taxonomies de WordPress. Le champ ACF doit être configuré pour permettre la création de termes. Les valeurs incluses dans le champs Airtable deviendront des termes dans la taxonomie ciblée. Voir les notes sur les taxonomies pour plus de détails sur le fonctionnement.|
+|multipleRecordLinks (relation)|Relation|Le champs Airtable doit contenir les identifiants WordPress des contenus correspond aux relations. Voir les notes sur les relations pour plus de détails sur le fonctionnement.|
 
 ## Statut des contenus dans WordPress
 
-Par défaut, la Passerelle crée des contenus en état brouillon dans WordPress. Il est possible de choisir l'état des contenus créés avec la clé `wordpress.status` des paramètres. Les valeurs acceptées sont `publish`, `future`, `draft`, `pending` et `private`.
+Par défaut, la Passerelle crée des contenus en état brouillon dans WordPress. Il est possible de choisir l'état des contenus créés avec la clé `wordpress.status` des paramètres. Les valeurs acceptées sont `publish`, `future`, `draft`, `pending` et `private`. Par exemple:
+
+```javascript
+config.params = JSON.stringify({
+    syncType: 'record',
+    airtable: {
+        table: 'Artistes'
+        ...
+    },
+    wordpress: {
+       postType: 'artiste',
+       status: 'publish',   // ⬅
+       acf: { ... }
+    }
+});
+```
+
+## Taxonomies
+
+Il est possible de faire en sorte qu'un champ de sélection multiple dans Airtable permet de gérer une taxonomie dans WordPress. Pour ce faire, la configuration du champs ACF doit être modifiée. Plutôt que de simplement indiquer la correspondance avec le champs ACF, il faut mentionner la taxonomie concernée. Le format doit être le suivant:
+
+```javascript
+config.params = JSON.stringify({
+    syncType: 'record',
+    airtable: {
+        table: 'Artistes'
+    },
+    wordpress: {
+       postType: 'artiste',
+       acf: {
+            'nom': 'Nom',
+            'prenom': 'Prénom',
+            'type_de_membre': { // ⬅
+              'field': 'Type de membre', // le champ Airtable de type multipleSelects
+              'model': 'type_de_membre' // le nom de la taxonomie
+            }
+       }
+    }
+});
+```
+
+Si une valeur du champ Airtable n'existe pas dans la taxonomie, elle sera créée dans WordPress. Les valeur non utilisées ne sont toutefois pas supprimées de WordPress.
+
+## Relations
+
+Un champ de relation dans Airtable peut être synchronisé avec un champ relation dans WordPress, à condition que la table liée dans Airtable soit également synchronisée vers un type de contenu dans WordPress.
+
+Les étapes à suivre sont les suivantes:
+
+* ajouter un champ de type _lookup_ dans Airtable pour obtenir les identifiants WordPress des enregistrements liés (l'utilisation des options de métadonnées permettant de stocker cet identifiant dans un champ dédié sera essentielle)
+* faire la configuration de synchronisation sur le champs _lookup_
+* utiliser les options de configurations détaillées pour spécifier le type de contenu lié dans WordPress
+
+L'appel au script prendra la forme suivante:
+
+```javascript
+config.params = JSON.stringify({
+    syncType: 'record',
+    airtable: {
+        table: 'Artistes'
+    },
+    wordpress: {
+       postType: 'artiste',
+       acf: {
+            'nom': 'Nom',
+            'prenom': 'Prénom',
+            'oeuvres': { // ⬅
+              'field': 'ID WordPress des oeuvres', // le champ lookup qui reprend les identifiants WordPress de la table liée
+              'model': 'oeuvre' // le nom du type de contenu lié dans WordPress
+            }
+       }
+    }
+});
+```
