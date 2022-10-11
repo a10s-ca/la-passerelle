@@ -16,6 +16,9 @@ config.params = JSON.stringify({
     },
     wordpress: {
        postType: 'artiste',
+       title: 'titre',
+       content: 'contenu',
+       featured_media: 83,
        acf: {
             'nom': 'Nom',
             'prenom': 'Prénom',
@@ -73,9 +76,9 @@ config.params = JSON.stringify({
 
 ## Types de champs supportés
 
-Les types de champs supportés par le script sont les suivants:
+Les types de champs supportés par le script, pour les correspondances vers des champs ACF (donc la cl/ `acf` sous `wordpress` dans l'objet de configuration), sont les suivants:
 
-|Type Airtable|Correspondace ACF suggérée|Notes|
+|Type Airtable|Correspondance ACF suggérée|Notes|
 |------------|------------|------------|
 |singleLineText|Text||
 |multilineText|Text Area||
@@ -91,6 +94,15 @@ Les types de champs supportés par le script sont les suivants:
 |multipleSelects|Option 1: Text|Le comportement sera identique à un champs _singleSelect_. Aucune configuration supplémentaire n'est nécessaire|
 ||Option 2: Taxonomy|Cette option permet d'interagir avec les taxonomies de WordPress. Le champ ACF doit être configuré pour permettre la création de termes. Les valeurs incluses dans le champs Airtable deviendront des termes dans la taxonomie ciblée. Voir les notes sur les taxonomies pour plus de détails sur le fonctionnement.|
 |multipleRecordLinks (relation)|Relation|Le champs Airtable doit contenir les identifiants WordPress des contenus correspond aux relations. Voir les notes sur les relations pour plus de détails sur le fonctionnement.|
+
+Dans le cas des champs standards de WordPress, le script permet d'indiquer les valeurs suivantes:
+
+* dans `params.wordpress.content`, le nom d'un champ quelconque dont le contenu, converti en texte, sera utilisé comme contenu principal du «post» dans WordPress
+* dans `params.wordpress.featured_media`, le choix du média principal du «post», sous la forme de soit:
+ * l'identifiant numérique du média WordPress, dans un champ texte ou nombre
+ * une image, dans un champs de pièce jointe Airtable
+
+
 
 ## Statut des contenus dans WordPress
 

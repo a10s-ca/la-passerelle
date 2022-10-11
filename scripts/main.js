@@ -25,11 +25,13 @@ function b2a(a) {
 }
 
 // wrapper for WordPress post API
-async function postToWordPress(postType, wordpressPostId, title, acf) {
+async function postToWordPress(postType, wordpressPostId, title, content, featuredMedia, acf) {
     let request = {
         method: 'POST',
         body: JSON.stringify({
             "title": title,
+            "content": content,
+            "featured_media": featuredMedia,
             "acf": acf,
             status: wordPressStatus
         }),
@@ -226,6 +228,28 @@ for (let record of records) {
     let meta = getMeta(record);
     let wordpressPostId = (meta.wordPressResponse && meta.wordPressResponse.id) || '';
 
+    // prepare Wordpress posts content
+    let title = record.getCellValueAsString(params.airtable.titleField);
+    let content = null;
+    let featuredMedia = null;
+    if (params.wordpress && params.wordpress.content) {
+        content = record.getCellValueAsString(params.wordpress.content);
+    };
+    if (params.wordpress && params.wordpress.featured_media) {
+        let airtableFieldName = params.wordpress.featured_media;
+        let field = table.getField(airtableFieldName);
+        if (field.type == 'multipleAttachments') {
+            let newMeta = await findOrCreateWordpressAttachment(table, record, airtableFieldName);
+            if (newMeta) {
+                meta = newMeta;
+                featuredMedia = meta.attachments[airtableFieldName] && meta.attachments[airtableFieldName].wordPressMediaId;
+            };
+        } else {
+            featuredMedia = parseInt(record.getCellValue(params.wordpress.featured_media));
+        }
+    };
+
+    // prepare ACF content
     let acf = {};
     for (const acfFieldName of Object.keys(params.wordpress.acf)) {
         // determine what the configs for that acf are
@@ -266,7 +290,7 @@ for (let record of records) {
     };
 
     // perform the actual update to WordPress
-    let response = await postToWordPress(params.wordpress.postType, wordpressPostId, record.getCellValueAsString(params.airtable.titleField), acf)
+    let response = await postToWordPress(params.wordpress.postType, wordpressPostId, title, content, featuredMedia, acf)
     console.log(response);
 
     // update meta information in the record, as well as optional fields for details
