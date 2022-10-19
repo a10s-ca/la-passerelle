@@ -36,6 +36,24 @@ let response = await remoteFetchAsync(webhookUrl, {
 });
 ```
 
+## Correspondance des champs
+
+La clé `params.wordpress` contient les configuration pour faire correspondre les entrées dans WordPress avec les champs de la table Airtable choisie.
+
+Pour tous les types de contenus (articles, pages ou types de contenus personnalisés), le script permet d'indiquer les valeurs suivantes:
+
+* `params.wordpress.title`: le titre du contenu
+* `params.wordpress.content`: le nom d'un champ quelconque dont le contenu, converti en texte, sera utilisé comme contenu principal du «post» dans WordPress
+* `params.wordpress.featured_media`: le choix du média principal du «post», sous la forme de soit:
+ * l'identifiant numérique du média WordPress, dans un champ texte ou nombre
+ * une image, dans un champs de pièce jointe Airtable
+
+Dans le cas des types de contenus personnalisés («custom post types») qui utilisent des champs avancés («custom fields»), la clé `params.wordpress.acf` permet de spécifier les correspondances. Les correspondance peuvent prendre deux formes:
+
+* `'nom du champ ACF': 'nom du champ Airtable'` dans la plupart des cas
+* `'nom du champ ACF': {objet de configuration avancée}` pour les correspondances de champs impliquant des modèles liés (relations et taxonomies). Les objets de configuration avancés sont décrits dans les sections dédiées plus bas.
+
+
 ## Métadonnées
 
 La Passerelle doit stocker certaines métadonnées relatives aux informations disponibles dans WordPress et dans Airtable. L'ensemble de ces métadonnées sont sérialisées au format JSON et stockées dans un champs de type «Long text» dans chacun des enregistrements des tables Airtable qui font l'objet d'une synchronisation.
@@ -81,7 +99,7 @@ Les types de champs supportés par le script, pour les correspondances vers des 
 |Type Airtable|Correspondance ACF suggérée|Notes|
 |------------|------------|------------|
 |singleLineText|Text||
-|multilineText|Text Area||
+|multilineText|Text Area|Airtable ne permet pas de récupérer les enrichissements de textes (gras, italique...) par le script. Nous suggérons de baliser les textes avec du HTML (<b>, <i>...).|
 |email|Email||
 |url|Url||
 |singleSelect|Option 1. Select|Si une valeur tirée de Airtable n'existe pas dans les options d'ACF, le champ ne sera pas synchronisé.|
@@ -91,19 +109,14 @@ Les types de champs supportés par le script, pour les correspondances vers des 
 |rollup|Text ou Text Area|Le résultat du rollup, convertit en texte, sera copié dans ACF|
 |date|Date Picker||
 |dateTime|Date Time Picker||
-|multipleAttachments (une seule image jointe)|Image|Seuls les champs contenant une seule pièce jointe, dans un format d'image connu (jpg, jpeg, png, gif, svg, ico, webp)|
+|multipleAttachments|Image ou File|Fonctionnement seulement pour les champs contenant une seule pièce jointe, dans un format d'image connu (jpg, jpeg, png, gif, svg, ico, webp) ou dans un autre format accepté par WordPress|
 |multipleSelects|Option 1: Text|Le comportement sera identique à l'option 1 d'un champs _singleSelect_. Aucune configuration supplémentaire n'est nécessaire|
 ||Option 2: Taxonomy|Cette option permet d'interagir avec les taxonomies de WordPress. Le champ ACF doit être configuré pour permettre la création de termes. Les valeurs incluses dans le champs Airtable deviendront des termes dans la taxonomie ciblée. Voir les notes sur les taxonomies pour plus de détails sur le fonctionnement.|
 |multipleRecordLinks (relation)|Relation|Le champs Airtable doit contenir les identifiants WordPress des contenus correspond aux relations. Voir les notes sur les relations pour plus de détails sur le fonctionnement.|
 
-Dans le cas des champs standards de WordPress, le script permet d'indiquer les valeurs suivantes:
+## Types de contenus dans WordPress
 
-* dans `params.wordpress.content`, le nom d'un champ quelconque dont le contenu, converti en texte, sera utilisé comme contenu principal du «post» dans WordPress
-* dans `params.wordpress.featured_media`, le choix du média principal du «post», sous la forme de soit:
- * l'identifiant numérique du média WordPress, dans un champ texte ou nombre
- * une image, dans un champs de pièce jointe Airtable
-
-
+Le type de contenu («post type») dans WordPress est déterminé par la clé `params.wordpress.postType` de l'objet de configuration. Pour le cas spécial des articles et des pages, les types de contenus sont respectivement `posts` et `pages`.
 
 ## Statut des contenus dans WordPress
 

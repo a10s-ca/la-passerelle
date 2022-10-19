@@ -262,7 +262,7 @@ for (let record of records) {
 
     // prepare ACF content
     let acf = {};
-    for (const acfFieldName of Object.keys(params.wordpress.acf)) {
+    for (const acfFieldName of Object.keys(params.wordpress.acf || {})) {
         // determine what the configs for that acf are
         var airtableFieldName;
         let wordpressDetails = {};
