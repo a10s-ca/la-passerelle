@@ -97,7 +97,8 @@ async function postMediaToWordPress(media) {
         body: content,
         headers: {
             'Authorization': "Basic " + b2a(WORDPRESSUSERNAME + ":" + APPLICATIONPASSWORD),
-            'Content-Disposition': 'attachment; filename="' + media.filename + '"',
+            'Content-Disposition': 'attachment; filename="' + media.filename.normalize('NFC') + '"',
+              // we need to use `.normalize('NFC')` because Airtable decomposes the Unicode caractere, which leads to incorrect request headers
             'Content-Type': media.type
         }
     };
