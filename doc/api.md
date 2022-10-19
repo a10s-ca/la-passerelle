@@ -84,14 +84,15 @@ Les types de champs supportés par le script, pour les correspondances vers des 
 |multilineText|Text Area||
 |email|Email||
 |url|Url||
-|singleSelect|Select|Si une valeur tirée de Airtable n'existe pas dans les options d'ACF, le champ ne sera pas synchronisé.|
+|singleSelect|Option 1. Select|Si une valeur tirée de Airtable n'existe pas dans les options d'ACF, le champ ne sera pas synchronisé.|
+||Option 2. Taxonomy|Cette option permet d'interagir avec les taxonomies de WordPress. Le champ ACF doit être configuré pour permettre la création de termes. Les valeurs incluses dans le champs Airtable deviendront des termes dans la taxonomie ciblée. Voir les notes sur les taxonomies pour plus de détails sur le fonctionnement.|
 |phoneNumber|Text||
 |formula|Text ou Text Area|Le résultat de la formule, convertit en texte, sera copié dans ACF|
 |rollup|Text ou Text Area|Le résultat du rollup, convertit en texte, sera copié dans ACF|
 |date|Date Picker||
 |dateTime|Date Time Picker||
 |multipleAttachments (une seule image jointe)|Image|Seuls les champs contenant une seule pièce jointe, dans un format d'image connu (jpg, jpeg, png, gif, svg, ico, webp)|
-|multipleSelects|Option 1: Text|Le comportement sera identique à un champs _singleSelect_. Aucune configuration supplémentaire n'est nécessaire|
+|multipleSelects|Option 1: Text|Le comportement sera identique à l'option 1 d'un champs _singleSelect_. Aucune configuration supplémentaire n'est nécessaire|
 ||Option 2: Taxonomy|Cette option permet d'interagir avec les taxonomies de WordPress. Le champ ACF doit être configuré pour permettre la création de termes. Les valeurs incluses dans le champs Airtable deviendront des termes dans la taxonomie ciblée. Voir les notes sur les taxonomies pour plus de détails sur le fonctionnement.|
 |multipleRecordLinks (relation)|Relation|Le champs Airtable doit contenir les identifiants WordPress des contenus correspond aux relations. Voir les notes sur les relations pour plus de détails sur le fonctionnement.|
 
@@ -125,7 +126,7 @@ config.params = JSON.stringify({
 
 ## Taxonomies
 
-Il est possible de faire en sorte qu'un champ de sélection multiple dans Airtable permet de gérer une taxonomie dans WordPress. Pour ce faire, la configuration du champs ACF doit être modifiée. Plutôt que de simplement indiquer la correspondance avec le champs ACF, il faut mentionner la taxonomie concernée. Le format doit être le suivant:
+Il est possible de faire en sorte qu'un champ de sélection simple ou multiple dans Airtable permette de gérer une taxonomie dans WordPress. Pour ce faire, la configuration du champs ACF doit être modifiée. Plutôt que de simplement indiquer la correspondance avec le champs ACF, il faut mentionner la taxonomie concernée. Le format doit être le suivant:
 
 ```javascript
 config.params = JSON.stringify({

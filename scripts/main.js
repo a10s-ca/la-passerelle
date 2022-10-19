@@ -181,10 +181,12 @@ async function findOrCreateWordpressAttachment(table, record, fieldName) {
 // WordPress REST API).
 async function findOrCreateModelTermId(modelName, term, meta) {
     if (!meta['models']) meta['models'] = {};
-    if (!meta['models'][modelName]) meta['models'][modelName] = {};
+    if (!meta['models'][modelName]) {
+        meta['models'][modelName] = {};
+    }
     if (!meta['models'][modelName][term] || !(typeof(meta['models'][modelName][term]) == 'number')) {
         let modelTermId = await postOrFindModelTermToWordpress(modelName, term);
-        meta['taxonomies'][modelName][term] = modelTermId;
+        meta['models'][modelName][term] = modelTermId;
     };
     return meta['models'][modelName][term];
 };
@@ -197,8 +199,16 @@ async function findOrCreateRelatedModels(field, record, wordpressDetails, meta) 
     let res = [];
     if (field.type == 'multipleSelects') {
         (record.getCellValue(field) || []).forEach(async(term) => {
-            res.push(await findOrCreateModelTermId(modelName, term.name, meta));
+            let id = await findOrCreateModelTermId(modelName, term.name, meta);
+            await res.push(id);
         })
+    };
+    if (field.type == 'singleSelect') {
+        let term = record.getCellValue(field);
+        if (term) {
+            let id = await findOrCreateModelTermId(modelName, term.name, meta);
+            await res.push(id);
+        }
     };
     return res;
 }
@@ -255,7 +265,7 @@ for (let record of records) {
     for (const acfFieldName of Object.keys(params.wordpress.acf)) {
         // determine what the configs for that acf are
         var airtableFieldName;
-        let wordpressDetails = { relation: false };
+        let wordpressDetails = {};
         if (typeof(params.wordpress.acf[acfFieldName]) == 'string') {
             airtableFieldName = params.wordpress.acf[acfFieldName];
         } else {
@@ -276,11 +286,13 @@ for (let record of records) {
                 // TODO we could make this cleaner by passing the value-as-reference meta var to findOrCreateWordpressAttachment and deal with updating meta within that function
                 break;
             case 'multipleSelects':
+            case 'singleSelect':
                 if (wordpressDetails.model) {
                     let relatedModels = await findOrCreateRelatedModels(field, record, wordpressDetails, meta);
                     if (relatedModels && relatedModels.length > 0) acf[acfFieldName] = relatedModels;
                 } else {
-                    acf[acfFieldName] = record.getCellValueAsString(airtableFieldName);
+                    let value = record.getCellValueAsString(airtableFieldName);
+                    if (value && value.length > 0) acf[acfFieldName] = value;
                 }
                 break;
             default: // 'singleLineText', 'multilineText', 'email', 'url', 'singleSelect', 'phoneNumber', 'formula', 'rollup', 'date, 'dateTime'
