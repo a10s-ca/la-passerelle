@@ -59,3 +59,15 @@ Dans ce cas, il est suggéré de créer une automatisation avec un déclencheur 
 ## Références
 
 La page dédiée à l'[API](doc/api.md) contient les références détaillées sur les options du script, le types de champs, etc.
+
+## Licence
+
+_En cas de litige, seule la [version originale](LICENSE.md) de cette page a valeur juridique._
+
+Copyright 2022 A10s inc. et RAPAIL
+
+La présente autorise, de façon libre et gratuite, à toute personne obtenant une copie de ce programme et des fichiers de documentation associés (le Programme), de distribuer le Programme sans restriction, y compris sans limitation des droits d'utiliser, copier, modifier, fusionner, publier, distribuer, sous-autoriser ou vendre des copies du Programme, et de permettre aux personnes à qui le Programme est fourni d'en faire autant, aux conditions suivantes.
+
+Le copyright précédent et cette autorisation doivent être distribués dans toute copie entière ou substantielle de ce Programme.
+
+Le Programme est fourni en l'état, sans garantie d'aucune sorte, explicite ou implicite, y compris les garanties de commercialisation ou d'adaptation dans un but particulier et l'absence de contrefaçon. En aucun cas les auteurs ou ayants droit ne seront tenus responsables de réclamations, dommages ou autres, que ce soit dans une action de nature contractuelle, préjudiciable ou autres façons, découlant de, hors ou en connexion avec le Programme ou l'utilisation ou autres modifications du Programme.
