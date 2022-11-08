@@ -113,6 +113,7 @@ Les types de champs supportés par le script, pour les correspondances vers des 
 |multipleSelects|Option 1: Text|Le comportement sera identique à l'option 1 d'un champs _singleSelect_. Aucune configuration supplémentaire n'est nécessaire|
 ||Option 2: Taxonomy|Cette option permet d'interagir avec les taxonomies de WordPress. Le champ ACF doit être configuré pour permettre la création de termes. Les valeurs incluses dans le champs Airtable deviendront des termes dans la taxonomie ciblée. Voir les notes sur les taxonomies pour plus de détails sur le fonctionnement.|
 |multipleRecordLinks (relation)|Relation|Le champs Airtable doit contenir les identifiants WordPress des contenus correspond aux relations. Voir les notes sur les relations pour plus de détails sur le fonctionnement.|
+|multipleLookupValues|Selon le type de champ référencé par le «lookup»|Supporte les «lookup» dont le résultat est envoyé vers un champs régulier (texte, date...) ou une taxonomie.|
 
 ## Types de contenus dans WordPress
 
@@ -139,7 +140,7 @@ config.params = JSON.stringify({
 
 ## Taxonomies
 
-Il est possible de faire en sorte qu'un champ de sélection simple ou multiple dans Airtable permette de gérer une taxonomie dans WordPress. Pour ce faire, la configuration du champs ACF doit être modifiée. Plutôt que de simplement indiquer la correspondance avec le champs ACF, il faut mentionner la taxonomie concernée. Le format doit être le suivant:
+Il est possible de faire en sorte qu'un champ de sélection simple ou multiple (ou un «lookup» tiré d'un tel champ) dans Airtable permette de gérer une taxonomie dans WordPress. Pour ce faire, la configuration du champs ACF doit être modifiée. Plutôt que de simplement indiquer la correspondance avec le champs ACF, il faut mentionner la taxonomie concernée. Le format doit être le suivant:
 
 ```javascript
 config.params = JSON.stringify({

@@ -203,6 +203,12 @@ async function findOrCreateRelatedModels(field, record, wordpressDetails, meta) 
             await res.push(id);
         })
     };
+    if (field.type == 'multipleLookupValues') {
+        (record.getCellValue(field) || []).forEach(async(term) => {
+            let id = await findOrCreateModelTermId(modelName, term, meta);
+            await res.push(id);
+        })
+    };
     if (field.type == 'singleSelect') {
         let term = record.getCellValue(field);
         if (term) {
@@ -287,6 +293,7 @@ for (let record of records) {
                 break;
             case 'multipleSelects':
             case 'singleSelect':
+            case 'multipleLookupValues':
                 if (wordpressDetails.model) {
                     let relatedModels = await findOrCreateRelatedModels(field, record, wordpressDetails, meta);
                     if (relatedModels && relatedModels.length > 0) acf[acfFieldName] = relatedModels;
