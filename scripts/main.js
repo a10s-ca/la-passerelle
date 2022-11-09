@@ -78,13 +78,6 @@ function getMeta(record) {
     return JSON.parse(record.getCellValueAsString(metaFieldName) || '{}');
 }
 
-// serializes a Passerelle meta object and saves it to the record
-async function setMeta(record, meta) {
-    let updateParams = {};
-    updateParams[metaFieldName] = JSON.stringify(meta);
-    await table.updateRecordAsync(record, updateParams);
-}
-
 // wrapper for WordPress Media API upload only
 async function postMediaToWordPress(media) {
     // download the image
@@ -315,10 +308,12 @@ for (let record of records) {
 
     // update meta information in the record, as well as optional fields for details
     meta.wordPressResponse = response;
-    await setMeta(record, meta);
-    if (wordPressIdFieldName) await table.updateRecordAsync(record, { [wordPressIdFieldName]: response.id.toString() });
-    if (wordPressUrlFieldName) await table.updateRecordAsync(record, { [wordPressUrlFieldName]: response.link });
-    if (lastSyncFieldName) await table.updateRecordAsync(record, { [lastSyncFieldName]: response.modified_gmt + 'Z' }); // the WordPress response does not include Z!
+    let updateParams = {}
+    updateParams[metaFieldName] = JSON.stringify(meta);
+    if (wordPressIdFieldName) updateParams[wordPressIdFieldName] = response.id.toString();
+    if (wordPressUrlFieldName) updateParams[wordPressUrlFieldName] = response.link;
+    if (lastSyncFieldName) updateParams[lastSyncFieldName] = response.modified_gmt + 'Z'; // the WordPress response does not include Z!
+    await table.updateRecordAsync(record, updateParams);
 }
 
 console.log("Terminé");
