@@ -15,6 +15,13 @@ const wordPressUrlFieldName = params.airtable && params.airtable.wpUrlField; // 
 const lastSyncFieldName = params.airtable && params.airtable.lastSyncFieldName; // will be null if the user does not want to use that field
 const wordPressStatus = params.wordpress && params.wordpress.status || 'draft';
 
+async function bench(desc, cb) {
+    let t1 = new Date().getTime();
+    await cb();
+    let t2 = new Date().getTime();
+    console.log(desc + ": " + (t2 - t1).toString());
+}
+
 // we cannot use btoa in automations; this is a replacement taken from http://jsfiddle.net/1okoy0r0
 function b2a(a) {
   var c, d, e, f, g, h, i, j, o, b = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=", k = 0, l = 0, m = "", n = [];
@@ -81,13 +88,16 @@ function getMeta(record) {
 // wrapper for WordPress Media API upload only
 async function postMediaToWordPress(media) {
     // download the image
-    let imageResponse = await fetch(media.url);
-    let content = await imageResponse.blob();
+    //let imageResponse = await fetch(media.url);
+    //let content = await imageResponse.blob();
+    const formData = new FormData();
+    formData.append("file", media.url);
 
     // then post it to WordPress
     let request = {
         method: 'POST',
-        body: content,
+//        body: content,
+        body: formData,
         headers: {
             'Authorization': "Basic " + b2a(WORDPRESSUSERNAME + ":" + APPLICATIONPASSWORD),
             'Content-Disposition': 'attachment; filename="' + media.filename.normalize('NFC') + '"',
@@ -276,7 +286,10 @@ for (let record of records) {
         let field = table.getField(airtableFieldName);
         switch(field.type) {
             case 'multipleAttachments':
-                let newMeta = await findOrCreateWordpressAttachment(table, record, airtableFieldName);
+                let newMeta = null;
+                await bench("Uploading attachment", async () => {
+                    newMeta = await findOrCreateWordpressAttachment(table, record, airtableFieldName);
+                })
                 if (newMeta) {
                     meta = newMeta;
                     acf[acfFieldName] = meta.attachments[airtableFieldName] && meta.attachments[airtableFieldName].wordPressMediaId;
@@ -303,7 +316,10 @@ for (let record of records) {
     };
 
     // perform the actual update to WordPress
-    let response = await postToWordPress(params.wordpress.postType, wordpressPostId, title, content, featuredMedia, acf)
+    let response = null;
+    await bench("Posting to WordPress", async () => {
+        response = await postToWordPress(params.wordpress.postType, wordpressPostId, title, content, featuredMedia, acf);
+    });
     console.log(response);
 
     // update meta information in the record, as well as optional fields for details
@@ -313,7 +329,10 @@ for (let record of records) {
     if (wordPressIdFieldName) updateParams[wordPressIdFieldName] = response.id.toString();
     if (wordPressUrlFieldName) updateParams[wordPressUrlFieldName] = response.link;
     if (lastSyncFieldName) updateParams[lastSyncFieldName] = response.modified_gmt + 'Z'; // the WordPress response does not include Z!
-    await table.updateRecordAsync(record, updateParams);
+    await bench("Updating Airtable", async () => {
+        await table.updateRecordAsync(record, updateParams);
+    })
+
 }
 
 console.log("Terminé");
