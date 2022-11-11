@@ -117,14 +117,13 @@ async function deleteWordPressMedia(mediaId) {
 
 // wrapper for WordPress media API, including business logic for updates
 // returns updated meta for the field
-async function findOrCreateWordpressAttachment(table, record, fieldName) {
+async function findOrCreateWordpressAttachment(table, record, fieldName, meta) {
     let medias = record.getCellValue(fieldName);
     let media = null;
     if (medias && medias.length > 0) media = medias[0]; // we use the first attachment only; support for galleries may be implemented later
 
     // Figure out if we already have created the media in WordPress, and whether it has
     // changed since then
-    let meta = getMeta(record);
     if (!meta.attachments) meta.attachments = {};
     let attachment = meta.attachments[fieldName]; // will be undefined if there is no info about the attachment
     let oldAttachementWordPressMediaId = attachment && attachment.wordPressMediaId;
@@ -249,7 +248,7 @@ for (let record of records) {
         let airtableFieldName = params.wordpress.featured_media;
         let field = table.getField(airtableFieldName);
         if (field.type == 'multipleAttachments') {
-            let newMeta = await findOrCreateWordpressAttachment(table, record, airtableFieldName);
+            let newMeta = await findOrCreateWordpressAttachment(table, record, airtableFieldName, meta);
             if (newMeta) {
                 meta = newMeta;
                 featuredMedia = meta.attachments[airtableFieldName] && meta.attachments[airtableFieldName].wordPressMediaId;
@@ -276,7 +275,7 @@ for (let record of records) {
         let field = table.getField(airtableFieldName);
         switch(field.type) {
             case 'multipleAttachments':
-                let newMeta = await findOrCreateWordpressAttachment(table, record, airtableFieldName);
+                let newMeta = await findOrCreateWordpressAttachment(table, record, airtableFieldName, meta);
                 if (newMeta) {
                     meta = newMeta;
                     acf[acfFieldName] = meta.attachments[airtableFieldName] && meta.attachments[airtableFieldName].wordPressMediaId;
