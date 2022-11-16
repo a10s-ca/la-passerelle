@@ -273,6 +273,7 @@ for (let record of records) {
 
         // get the Airtable field and process it
         let field = table.getField(airtableFieldName);
+        let value = record.getCellValueAsString(airtableFieldName);
         switch(field.type) {
             case 'multipleAttachments':
                 let newMeta = await findOrCreateWordpressAttachment(table, record, airtableFieldName, meta);
@@ -286,16 +287,16 @@ for (let record of records) {
             case 'multipleSelects':
             case 'singleSelect':
             case 'multipleLookupValues':
-                if (wordpressDetails.model) {
-                    let relatedModels = await findOrCreateRelatedModels(field, record, wordpressDetails, meta);
-                    if (relatedModels && relatedModels.length > 0) acf[acfFieldName] = relatedModels;
-                } else {
-                    let value = record.getCellValueAsString(airtableFieldName);
-                    if (value && value.length > 0) acf[acfFieldName] = value;
+                if (value && value.length > 0) {
+                    if (wordpressDetails.model) {
+                        let relatedModels = await findOrCreateRelatedModels(field, record, wordpressDetails, meta);
+                        if (relatedModels && relatedModels.length > 0) acf[acfFieldName] = relatedModels;
+                    } else {
+                        acf[acfFieldName] = value;
+                    }
                 }
                 break;
             default: // 'singleLineText', 'multilineText', 'email', 'url', 'singleSelect', 'phoneNumber', 'formula', 'rollup', 'date, 'dateTime'
-                let value = record.getCellValueAsString(airtableFieldName);
                 if (value && value.length > 0) acf[acfFieldName] = value;
                 break;
         };
