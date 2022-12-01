@@ -36,7 +36,7 @@ Pour réaliser les synchronisations, il est nécessaire d'installer le script de
 
 Dans «Automations», choisissez «Create automation», et nommez l'automatisation (par exemple, «Script WordPress»). Cliquez sur «Add trigger», puis sélectionnez le déclencheur «When webhook received». L'automatisation devrait ressembler à ceci:
 
-![Saisie d'écran de l'outil Automation de Airtable](images/airtable2.1.png)
+![Saisie d'écran de l'outil Automation de Airtable](../images/airtable2.1.png)
 
 Copiez le lien disponible sous «Send an example webhook to» et conservez le dans un endroit sécurisé.
 
@@ -72,7 +72,7 @@ Nous suggérons de créer une extension dédiée à ce test. Pour ce faire:
 
 Ensuite, il suffit d'exécuter le script de test en cliquant sur le bouton «Run» de la partie droite de l'écran. Si toutes les étapes ont bien été complétées, vous devriez obtenir un résultat similaire à celui-ci:
 
-![Saisie d'écran de l'extension Scripting de Airtable](images/airtable2.4.png)
+![Saisie d'écran de l'extension Scripting de Airtable](../images/airtable2.4.png)
 
 > **Note:** Vous pouvez supprimer l'extension utilisée pour le test, elle ne sera plus utile.
 
@@ -86,7 +86,7 @@ Cliquez sur la tâche «Run a script», puis ouvrez la fenêtre d'édition du co
 
 Dans la fenêtre d'édition du code, repérez la variable d'entrée `params` créée à l'étape 2.3. Dans le champs «Value», insérez le contenu de `params` de la façon suivante:
 
-![Procédure de sélection d'un paramètre](images/airtable2.5.gif)
+![Procédure de sélection d'un paramètre](../images/airtable2.5.gif)
 
 Fermez la fenêtre d'édition du script en cliquant sur «Finish editing».
 
