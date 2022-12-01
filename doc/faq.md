@@ -2,15 +2,17 @@
 
 ## Performances
 
-### Le script ne complète pas les tâches prévues et le journal d'exécution contient «Script exceeded execution time limit of 30 seconds»
+### Le script principal ne complète pas les tâches prévues et le journal d'exécution contient «Script exceeded execution time limit of 30 seconds»
 
-Plusieurs raisons peuvent expliquer ce message d'erreur, mais dans tous les cas, la solution consiste à limiter le nombre d'opérations, ou leur complexité.
+Plusieurs raisons peuvent expliquer ce message d'erreur, mais dans tous les cas, deux approches sont disponibles pour régler le problème.
 
-Voici des pistes de solutions:
+La première approche consiste à limiter le nombre d'opérations, ou leur complexité. Voici des exemples de solutions associées à cette approche:
 
 * réduire la taille des pièces jointes ;
 * synchroniser seulement le contenu des champs essentiels ;
 * limiter le nombre d'enregistrements synchronisés en utilisant une vue Airtable qui se limite aux enregistrements qui doivent être synchronisés.
+
+La deuxième approche consiste à segmenter l'appel au script principal en plusieurs appels. Par exemple, au lien de synchroniser une table ou une vue en entier d'un seul appel au script principal, le script appelant (typiquement une extension) peut itérer sur les enregistrements et appeler le script principal pour chacun d'eux. Cette approche est illustrée dans les [exemples de code](../scripts/loopOverRecordsSync.js)
 
 ## Configurations
 
