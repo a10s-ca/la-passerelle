@@ -44,7 +44,7 @@ Copiez le lien disponible sous «Send an example webhook to» et conservez le da
 
 Dans l'automatisation, sous «Run actions», cliquez sur «+ Add action», puis sélectionnez l'option «Run script».
 
-La fenêtre d'édition de script vous sera présentée. Supprimez le contenu de la section «Code» et copiez y le contenu du [script principal](scripts/main.js).
+La fenêtre d'édition de script vous sera présentée. Supprimez le contenu de la section «Code» et copiez y le contenu du [script principal](../scripts/main.js).
 
 #### 2.3. Configurer les accès à WordPress et les variables de paramétrage du script
 
@@ -68,7 +68,7 @@ Nous suggérons de créer une extension dédiée à ce test. Pour ce faire:
 * cliquez sur «+ Add an extension», choisissez l'extension «Scripting», puis cliquez sur «Add extension»
 * la fenêtre d'édition de script apparaîtra. Au besoin, fermez la fenêtre de présentation en cliquant sur «Get Started», puis «Start from scratch»
 * supprimez le contenu de la fenêtre d'édition du script
-* copiez-y le contenu du [script de test](scripts/test.js), et remplacez `{{URL}}` par le lien que vous avez noté à l'étape 2.1
+* copiez-y le contenu du [script de test](../scripts/test.js), et remplacez `{{URL}}` par le lien que vous avez noté à l'étape 2.1
 
 Ensuite, il suffit d'exécuter le script de test en cliquant sur le bouton «Run» de la partie droite de l'écran. Si toutes les étapes ont bien été complétées, vous devriez obtenir un résultat similaire à celui-ci:
 
