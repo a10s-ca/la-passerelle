@@ -1,7 +1,5 @@
+// Pour accéder au script principal de La Passerelle
 const webhookUrl = 'https://hooks.airtable.com/workflows/v1/genericWebhook/appsED4vVIGejT2uw/wflHitpDRkP0HP2OF/wtr2Px6U0jIWN0ANQ';
-
-let menuTable = base.getTable('Menu La Passerelle');
-let commande = await input.recordAsync('Quelle commande?', menuTable);
 
 // Configurations générales des synchronisations pour chaque table
 let baseParams = {
@@ -66,9 +64,37 @@ let baseParams = {
     }
 }
 
-// Identifier la table à synchroniser, et le type de synchronisation
-let syncTable = base.getTable(commande.getCellValueAsString('Table'));
-let syncType = commande.getCellValueAsString('Type de synchro');
+// Identifier la table du menu
+const menuTableName = 'Menu La Passerelle';
+let menuTable = base.getTable(menuTableName);
+
+// Déterminer la commande à exécuter en fonction du contexte de l'usager.
+let commande, syncTable, syncTableName, syncType, status, record;
+let cursorTableId = cursor.activeTableId;
+let cursorTable = base.getTable(cursorTableId);
+
+// Si l'usager est dans la table du menu, on lui présente toutes les commandes.
+if (cursorTable == menuTable) {
+    commande = await input.recordAsync('Quelle commande?', menuTable);
+    syncTableName = commande.getCellValueAsString('Table');
+    syncTable = base.getTable(syncTableName);
+    syncType = commande.getCellValueAsString('Type de synchro');
+    status = commande.getCellValueAsString('Statut')
+
+// Si l'usager est dans une autre table, on sait qu'il veut synchroniser un enregistrement
+} else {
+    syncType = "Enregistrement d'une autre table";
+    syncTable = cursorTable;
+    syncTableName = syncTable.name;
+    status = 'publish';
+    if (syncTable.getView(cursor.activeViewId).name.toLowerCase().includes("brouillon")) status = 'draft';
+    record = await input.recordAsync('Quel enregistrement', syncTable);
+}
+
+output.markdown("# Synchronisation de données...");
+output.markdown("Table: " + syncTableName);
+output.markdown("Statut: `" + status + "`");
+output.markdown("Type: " + syncType);
 
 // Identifier quels enregistrements seront synchronisés, selon les configurations du menu
 var query, records;
@@ -83,14 +109,17 @@ switch(syncType) {
         records = query.records;
         break;
     case "Un enregistrement":
-        let record = await input.recordAsync("Pour quel enregistrement?", syncTable);
+        record = await input.recordAsync("Pour quel enregistrement?", syncTable);
+        records = [record];
+        break;
+    case "Enregistrement d'une autre table":
         records = [record];
         break;
 }
 
 // Obtenir les paramètres de la table ciblée, et les personnaliser avec le statut choisi
-let params = baseParams[commande.getCellValueAsString('Table')];
-params.wordpress.status = commande.getCellValueAsString('Statut');
+let params = baseParams[syncTableName];
+params.wordpress.status = status;
 
 // Itérer sur tous les enregistrements et les synchroniser
 for (let record of records) {
