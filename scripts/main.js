@@ -294,10 +294,17 @@ for (let record of records) {
                     } else {
                         acf[acfFieldName] = value;
                     }
+                } else {
+                    acf[acfFieldName] = null;
                 }
                 break;
             default: // 'singleLineText', 'multilineText', 'email', 'url', 'singleSelect', 'phoneNumber', 'formula', 'rollup', 'date, 'dateTime'
-                if (value && value.length > 0) acf[acfFieldName] = value;
+                if (value && value.length > 0) {
+                    acf[acfFieldName] = value;
+                } else {
+                    acf[acfFieldName] = null;
+                }
+
                 break;
         };
     };
