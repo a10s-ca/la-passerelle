@@ -12,11 +12,11 @@ La première approche consiste à limiter le nombre d'opérations, ou leur compl
 * synchroniser seulement le contenu des champs essentiels ;
 * limiter le nombre d'enregistrements synchronisés en utilisant une vue Airtable qui se limite aux enregistrements qui doivent être synchronisés.
 
-La deuxième approche consiste à segmenter l'appel au script principal en plusieurs appels. Par exemple, au lien de synchroniser une table ou une vue en entier d'un seul appel au script principal, le script appelant (typiquement une extension) peut itérer sur les enregistrements et appeler le script principal pour chacun d'eux. Cette approche est illustrée dans les [exemples de code](../scripts/loopOverRecordsSync.js)
+La deuxième approche consiste à segmenter l'appel au script principal en plusieurs appels. Par exemple, au lieu de synchroniser une table ou une vue en entier d'un seul appel au script principal, le script appelant (typiquement une extension) peut itérer sur les enregistrements et appeler le script principal pour chacun d'eux. Cette approche est illustrée dans les [exemples de code](../scripts/loopOverRecordsSync.js)
 
 ## Configurations
 
-### Un nom de champs dans Airtable contient un apostrophe, comment faire pour l'identifier dans les configurations?
+### Un nom de champs dans Airtable contient une apostrophe, comment faire pour l'identifier dans les configurations?
 
 Nos exemples JavaScript utilisent l'apostrophe comme délimiteur de chaîne de caractères, mais vous pouvez utiliser les guillemets.
 
