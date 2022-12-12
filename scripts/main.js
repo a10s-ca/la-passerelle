@@ -288,6 +288,7 @@ for (let record of records) {
             case 'multipleSelects':
             case 'singleSelect':
             case 'multipleLookupValues':
+            case 'formula':
                 if (value && value.length > 0) {
                     if (wordpressDetails.model) {
                         let relatedModels = await findOrCreateRelatedModels(field, record, wordpressDetails, meta);
@@ -299,7 +300,7 @@ for (let record of records) {
                     acf[acfFieldName] = null;
                 }
                 break;
-            default: // 'singleLineText', 'multilineText', 'email', 'url', 'singleSelect', 'phoneNumber', 'formula', 'rollup', 'date, 'dateTime'
+            default: // 'singleLineText', 'multilineText', 'email', 'url', 'singleSelect', 'phoneNumber', 'rollup', 'date, 'dateTime'
                 if (value && value.length > 0) {
                     acf[acfFieldName] = value;
                 } else {
