@@ -13,6 +13,7 @@ const metaFieldName = params.airtable.metaFieldName || 'meta';
 const wordPressIdFieldName = params.airtable && params.airtable.wpIdField; // will be null if the user does not want to use that field
 const wordPressUrlFieldName = params.airtable && params.airtable.wpUrlField; // will be null if the user does not want to use that field
 const lastSyncFieldName = params.airtable && params.airtable.lastSyncFieldName; // will be null if the user does not want to use that field
+const wordPressMediaIdFieldName = params.airtable && params.airtable.wpMediaIdField; // will be null if the user does not want to use that field
 const wordPressStatus = params.wordpress && params.wordpress.status || 'draft';
 
 // we cannot use btoa in automations; this is a replacement taken from http://jsfiddle.net/1okoy0r0
@@ -309,6 +310,8 @@ for (let record of records) {
         };
     };
 
+    console.log(acf);
+
     // perform the actual update to WordPress
     let response = await postToWordPress(params.wordpress.postType, wordpressPostId, title, content, featuredMedia, acf)
     console.log(response);
@@ -320,6 +323,7 @@ for (let record of records) {
     if (wordPressIdFieldName) updateParams[wordPressIdFieldName] = response.id.toString();
     if (wordPressUrlFieldName) updateParams[wordPressUrlFieldName] = response.link;
     if (lastSyncFieldName) updateParams[lastSyncFieldName] = response.modified_gmt + 'Z'; // the WordPress response does not include Z!
+    if (wordPressMediaIdFieldName) updateParams[wordPressMediaIdFieldName] = meta['attachments'] && Object.keys(meta['attachments']).map((att) => meta['attachments'][att].wordPressMediaId).join(',');
     await table.updateRecordAsync(record, updateParams);
 }
 

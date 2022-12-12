@@ -65,6 +65,7 @@ Il est par ailleurs possible de faire en sorte que le script note certaines de c
 |Clé de paramètre|Type de champ|Contenu du champ|
 |------------|------------|------------|
 |wpIdField|Nombre entier|Identifiant WordPress du contenu|
+|wpMediaIdField|Nombre entier ou texte|Identifiant(s) WordPress des médias correspondant aux pièces jointes du présent enregistrement|
 |wpUrlField|URL|Lien public du contenu dans WordPress|
 |lastSyncFieldName|Date et heure|Date et heure de la dernière synchronisation|
 
@@ -113,7 +114,7 @@ Les types de champs supportés par le script, pour les correspondances vers des 
 |multipleSelects|Option 1: Text|Le comportement sera identique à l'option 1 d'un champs _singleSelect_. Aucune configuration supplémentaire n'est nécessaire|
 ||Option 2: Taxonomy|Cette option permet d'interagir avec les taxonomies de WordPress. Le champ ACF doit être configuré pour permettre la création de termes. Les valeurs incluses dans le champs Airtable deviendront des termes dans la taxonomie ciblée. Voir les notes sur les taxonomies pour plus de détails sur le fonctionnement.|
 |multipleRecordLinks (relation)|Relation|Le champs Airtable doit contenir les identifiants WordPress des contenus correspond aux relations. Voir les notes sur les relations pour plus de détails sur le fonctionnement.|
-|multipleLookupValues|Selon le type de champ référencé par le «lookup»|Supporte les «lookup» dont le résultat est envoyé vers un champs régulier (texte, date...) ou une taxonomie.|
+|multipleLookupValues|Selon le type de champ référencé par le «lookup»|Supporte les «lookup» dont le résultat est envoyé vers un champs régulier (texte, date...), une taxonomie ou un champ média (dans ce cas, le «lookup» doit impérativement contenir une valeur, les champs vides ne sont pas supportés, et contenir un seul média).|
 
 ## Types de contenus dans WordPress
 

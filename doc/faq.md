@@ -39,3 +39,16 @@ deviendra plutôt ceci:
 ### Comment faire pour importer du texte mis en forme (gras, italique) dans WordPress?
 
 L'API d'Airtable ne permet pas d'obtenir la mise en forme native des champs texte long avec du «rich formatting». Nous suggérons donc de _ne pas_ utiliser l'option «rich formatting» et d'inclure des balises HTML simples dans le champ long texte, par exemple `<b></b>`, `<i></i>`, etc. Notez qu'il n'est pas nécessaire d'utiliser de balises pour les changements de lignes (~~`<br/>`~~).
+
+### Comment faire pour synchorniser vers Airtable une pièce jointe tirée d'une table liée, à travers un champ de type «lookup»?
+
+Il n'est pas possible de synchroniser le «lookup» d'une pièce jointe, par exemple une image. Par contre, si la table d'où provient la pièce jointe est synchronisée vers Airtable, il est possible de synchroniser vers WordPress les identifiants des pièces jointes, obtenus par un «lookup». De façon plus précise, il faut:
+
+* dans la table qui contient les pièces jointes, ajouter un champ pour stocker les identifiants WordPress des médias correspondant
+* configurer la synchronisation de la table en question pour que les identifiants de médias soient notés, en utilisant le paramètre de configuration `wpMediaIdField` (voir [l'API](api.md) pour plus d'information)
+* créer dans la table de destination un «lookup» du champ contenant les identifiants WordPress de médias
+* synchroniser ce champ vers le champ ACF de média correspondant.
+
+À noter:
+* la synchronisation de médias par des identifiants en «lookup» ne fonctionne seulement que si l'image est présente. Autrement, le script se termine sur une erreur
+* cette stratégie est limitée à un seul média en «lookup»
