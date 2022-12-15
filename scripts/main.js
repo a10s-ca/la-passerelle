@@ -190,24 +190,28 @@ async function findOrCreateModelTermId(modelName, term, meta) {
 async function findOrCreateRelatedModels(field, record, wordpressDetails, meta) {
     let modelName = wordpressDetails.model;
     let res = [];
-    if (field.type == 'multipleSelects') {
-        (record.getCellValue(field) || []).forEach(async(term) => {
-            let id = await findOrCreateModelTermId(modelName, term.name, meta);
-            await res.push(id);
-        })
-    };
-    if (field.type == 'multipleLookupValues') {
-        (record.getCellValue(field) || []).forEach(async(term) => {
-            let id = await findOrCreateModelTermId(modelName, term, meta);
-            await res.push(id);
-        })
-    };
-    if (field.type == 'singleSelect') {
-        let term = record.getCellValue(field);
-        if (term) {
-            let id = await findOrCreateModelTermId(modelName, term.name, meta);
-            await res.push(id);
-        }
+    switch(field.type) {
+        case 'multipleSelects':
+            (record.getCellValue(field) || []).forEach(async(term) => {
+                let id = await findOrCreateModelTermId(modelName, term.name, meta);
+                await res.push(id);
+            })
+            break;
+        case 'multipleLookupValues':
+            (record.getCellValue(field) || []).forEach(async(term) => {
+                let id = await findOrCreateModelTermId(modelName, term, meta);
+                await res.push(id);
+            })
+            break;
+        case 'singleSelect':
+        case 'formula':
+        case 'singleLineText':
+            let term = record.getCellValueAsString(field);
+            if (term && term.length > 0) {
+                let id = await findOrCreateModelTermId(modelName, term, meta);
+                await res.push(id);
+            }
+            break;
     };
     return res;
 }
