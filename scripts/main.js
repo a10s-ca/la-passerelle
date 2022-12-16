@@ -79,6 +79,36 @@ function getMeta(record) {
     return JSON.parse(record.getCellValueAsString(metaFieldName) || '{}');
 }
 
+// converts a media filename so that it is acceptable for WordPress's API
+function mediaFileName(media) {
+    // first, check encoding and apostrophe type
+    filename = media.filename.normalize('NFC').replaceAll('’', '');
+
+    // then, make sure we have an extension
+    switch(media.type) {
+        case 'image/jpeg':
+            if (!filename.toLowerCase().includes('.jpg') && !filename.toLowerCase().includes('.jpeg')) filename = filename + '.jpg';
+            break;
+        case 'image/png':
+            if (!filename.toLowerCase().includes('.png')) filename = filename + '.png';
+            break;
+        case 'image/gif':
+            if (!filename.toLowerCase().includes('.gif')) filename = filename + '.gif';
+            break;
+        case 'image/svg+xml':
+            if (!filename.toLowerCase().includes('.svg')) filename = filename + '.svg';
+            break;
+        case 'image/webp':
+            if (!filename.toLowerCase().includes('.webp')) filename = filename + '.webp';
+            break;
+        case 'image/tiff':
+            if (!filename.toLowerCase().includes('.tiff') && !filename.toLowerCase().includes('.tif')) filename = filename + '.tiff';
+            break;
+    }
+
+    return filename;
+};
+
 // wrapper for WordPress Media API upload only
 async function postMediaToWordPress(media) {
     // download the image
@@ -91,7 +121,7 @@ async function postMediaToWordPress(media) {
         body: content,
         headers: {
             'Authorization': "Basic " + b2a(WORDPRESSUSERNAME + ":" + APPLICATIONPASSWORD),
-            'Content-Disposition': 'attachment; filename="' + media.filename.normalize('NFC').replaceAll('’', '') + '"',
+            'Content-Disposition': 'attachment; filename="' + mediaFileName(media) + '"',
               // we need to use `.normalize('NFC')` because Airtable decomposes the Unicode caractere, which leads to incorrect request headers
             'Content-Type': media.type
         }
