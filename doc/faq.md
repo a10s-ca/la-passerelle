@@ -57,10 +57,10 @@ Il n'est pas possible de synchroniser le «lookup» d'une pièce jointe, par exe
 
 ### Comment simplifier l'expérience des utilisateurs lorsque plusieurs options de synchronisation sont disponibles?
 
-La présence de plusieurs modes de synchronisation, pour plusieurs tables dans une même base, peut rendre l'opération de la Passerelle complexe pour certains utilisateurs. Il est possible de créer une table de menu pour les différentes opérations, pour simplifier la vie des utilisateurs. Cette stratégie est décrite dans [un exemple avancé](../scripts/exemples.md#avancé-un-seul-script-pour-plusieurs-types-dopérations-et-pour-maintenir-une-seule-table-de-correspondances).
+La présence de plusieurs modes de synchronisation, pour plusieurs tables dans une même base, peut rendre l'opération de la Passerelle complexe pour certains utilisateurs. Il est possible de créer une table de menu pour les différentes opérations, pour simplifier la vie des utilisateurs. Cette stratégie est décrite dans [un exemple avancé](../doc/exemples.md#avancé-un-seul-script-pour-plusieurs-types-dopérations-et-pour-maintenir-une-seule-table-de-correspondances).
 
 ## Expérience développeur
 
 ### Comment faire pour éviter de dupliquer les confirmations des correspondance de champs dans plusieurs extensions?
 
-Il est possible de créer une extension polyvalent qui répond à la plupart des besoins, et qui contient toutes les tables de correspondances, pour toutes les tables, à un seul endroit. Cette stratégie est décrite dans [un exemple avancé](../scripts/exemples.md#avancé-un-seul-script-pour-plusieurs-types-dopérations-et-pour-maintenir-une-seule-table-de-correspondances).
+Il est possible de créer une extension polyvalent qui répond à la plupart des besoins, et qui contient toutes les tables de correspondances, pour toutes les tables, à un seul endroit. Cette stratégie est décrite dans [un exemple avancé](../doc/exemples.md#avancé-un-seul-script-pour-plusieurs-types-dopérations-et-pour-maintenir-une-seule-table-de-correspondances).
