@@ -40,7 +40,7 @@ deviendra plutôt ceci:
 
 L'API d'Airtable ne permet pas d'obtenir la mise en forme native des champs texte long avec du «rich formatting». Nous suggérons donc de _ne pas_ utiliser l'option «rich formatting» et d'inclure des balises HTML simples dans le champ long texte, par exemple `<b></b>`, `<i></i>`, etc. Notez qu'il n'est pas nécessaire d'utiliser de balises pour les changements de lignes (~~`<br/>`~~).
 
-### Comment faire pour synchorniser vers Airtable une pièce jointe tirée d'une table liée, à travers un champ de type «lookup»?
+### Comment faire pour synchroniser vers Airtable une pièce jointe tirée d'une table liée, à travers un champ de type «lookup»?
 
 Il n'est pas possible de synchroniser le «lookup» d'une pièce jointe, par exemple une image. Par contre, si la table d'où provient la pièce jointe est synchronisée vers Airtable, il est possible de synchroniser vers WordPress les identifiants des pièces jointes, obtenus par un «lookup». De façon plus précise, il faut:
 
@@ -52,3 +52,15 @@ Il n'est pas possible de synchroniser le «lookup» d'une pièce jointe, par exe
 À noter:
 * la synchronisation de médias par des identifiants en «lookup» ne fonctionne seulement que si l'image est présente. Autrement, le script se termine sur une erreur
 * cette stratégie est limitée à un seul média en «lookup»
+
+## Expérience utilisateur
+
+### Comment simplifier l'expérience des utilisateurs lorsque plusieurs options de synchronisation sont disponibles?
+
+La présence de plusieurs modes de synchronisation, pour plusieurs tables dans une même base, peut rendre l'opération de la Passerelle complexe pour certains utilisateurs. Il est possible de créer une table de menu pour les différentes opérations, pour simplifier la vie des utilisateurs. Cette stratégie est décrite dans [un exemple avancé](../scripts/exemples.md#avancé-un-seul-script-pour-plusieurs-types-dopérations-et-pour-maintenir-une-seule-table-de-correspondances).
+
+## Expérience développeur
+
+### Comment faire pour éviter de dupliquer les confirmations des correspondance de champs dans plusieurs extensions?
+
+Il est possible de créer une extension polyvalent qui répond à la plupart des besoins, et qui contient toutes les tables de correspondances, pour toutes les tables, à un seul endroit. Cette stratégie est décrite dans [un exemple avancé](../scripts/exemples.md#avancé-un-seul-script-pour-plusieurs-types-dopérations-et-pour-maintenir-une-seule-table-de-correspondances).
