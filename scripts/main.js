@@ -71,7 +71,7 @@ async function postOrFindModelTermToWordpress(modelName, term) {
         response.id = response.additional_data[0];
     };
 
-    return response.id;
+    return response;
 }
 
 // returns an object containing the Passerelle meta data in a record
@@ -207,11 +207,15 @@ async function findOrCreateModelTermId(modelName, term, meta) {
     if (!meta['models'][modelName]) {
         meta['models'][modelName] = {};
     }
-    if (!meta['models'][modelName][term] || !(typeof(meta['models'][modelName][term]) == 'number')) {
-        let modelTermId = await postOrFindModelTermToWordpress(modelName, term);
-        meta['models'][modelName][term] = modelTermId;
-    };
-    return meta['models'][modelName][term];
+
+    if (meta['models'][modelName][term] && (typeof(meta['models'][modelName][term]) == 'number')) {
+        return meta['models'][modelName][term];
+    } else {
+        let modelTerm = await postOrFindModelTermToWordpress(modelName, term);
+        let modelTermId = modelTerm.id;
+        meta['models'][modelName][term] = await modelTermId;
+        return modelTermId;
+    }
 };
 
 // A "related model" can be a custom post type, or it can be a taxonomy. Both are
@@ -222,16 +226,16 @@ async function findOrCreateRelatedModels(field, record, wordpressDetails, meta) 
     let res = [];
     switch(field.type) {
         case 'multipleSelects':
-            (record.getCellValue(field) || []).forEach(async(term) => {
+            for (const term of (record.getCellValue(field) || [])) {
                 let id = await findOrCreateModelTermId(modelName, term.name, meta);
-                await res.push(id);
-            })
+                res.push(id);
+            };
             break;
         case 'multipleLookupValues':
-            (record.getCellValue(field) || []).forEach(async(term) => {
+            for (const term of (record.getCellValue(field) || [])) {
                 let id = await findOrCreateModelTermId(modelName, term, meta);
                 await res.push(id);
-            })
+            };
             break;
         case 'singleSelect':
         case 'formula':
@@ -267,99 +271,101 @@ if (params.syncType == 'record') {
     console.log("Type de synchronisation inconnue (rien ne sera synchronisé.");
 };
 
-// do the actual sync on all relevant records
-for (let record of records) {
-    let meta = getMeta(record);
-    let wordpressPostId = (meta.wordPressResponse && meta.wordPressResponse.id) || '';
+async function main()  {
+    // do the actual sync on all relevant records
+    for (let record of records) {
+        let meta = getMeta(record);
+        let wordpressPostId = (meta.wordPressResponse && meta.wordPressResponse.id) || '';
 
-    // prepare Wordpress posts content
-    let title = record.getCellValueAsString(params.airtable.titleField);
-    let content = null;
-    let featuredMedia = null;
-    if (params.wordpress && params.wordpress.content) {
-        content = record.getCellValueAsString(params.wordpress.content);
-    };
-    if (params.wordpress && params.wordpress.featured_media) {
-        let airtableFieldName = params.wordpress.featured_media;
-        let field = table.getField(airtableFieldName);
-        if (field.type == 'multipleAttachments') {
-            let newMeta = await findOrCreateWordpressAttachment(table, record, airtableFieldName, meta);
-            if (newMeta) {
-                meta = newMeta;
-                featuredMedia = meta.attachments[airtableFieldName] && meta.attachments[airtableFieldName].wordPressMediaId;
-            };
-        } else {
-            featuredMedia = parseInt(record.getCellValue(params.wordpress.featured_media));
-        }
-    };
-
-    // prepare ACF content
-    let acf = {};
-    for (const acfFieldName of Object.keys(params.wordpress.acf || {})) {
-        // determine what the configs for that acf are
-        var airtableFieldName;
-        let wordpressDetails = {};
-        if (typeof(params.wordpress.acf[acfFieldName]) == 'string') {
-            airtableFieldName = params.wordpress.acf[acfFieldName];
-        } else {
-            airtableFieldName = params.wordpress.acf[acfFieldName].field;
-            wordpressDetails.model = params.wordpress.acf[acfFieldName].model;
-        }
-
-        // get the Airtable field and process it
-        let field = table.getField(airtableFieldName);
-        let value = record.getCellValueAsString(airtableFieldName);
-        switch(field.type) {
-            case 'multipleAttachments':
+        // prepare Wordpress posts content
+        let title = record.getCellValueAsString(params.airtable.titleField);
+        let content = null;
+        let featuredMedia = null;
+        if (params.wordpress && params.wordpress.content) {
+            content = record.getCellValueAsString(params.wordpress.content);
+        };
+        if (params.wordpress && params.wordpress.featured_media) {
+            let airtableFieldName = params.wordpress.featured_media;
+            let field = table.getField(airtableFieldName);
+            if (field.type == 'multipleAttachments') {
                 let newMeta = await findOrCreateWordpressAttachment(table, record, airtableFieldName, meta);
                 if (newMeta) {
                     meta = newMeta;
-                    acf[acfFieldName] = meta.attachments[airtableFieldName] && meta.attachments[airtableFieldName].wordPressMediaId;
-                }
-                // TODO: else?
-                // TODO we could make this cleaner by passing the value-as-reference meta var to findOrCreateWordpressAttachment and deal with updating meta within that function
-                break;
-            case 'multipleSelects':
-            case 'singleSelect':
-            case 'multipleLookupValues':
-            case 'formula':
-                if (value && value.length > 0) {
-                    if (wordpressDetails.model) {
-                        let relatedModels = await findOrCreateRelatedModels(field, record, wordpressDetails, meta);
-                        if (relatedModels && relatedModels.length > 0) acf[acfFieldName] = relatedModels;
-                    } else {
-                        acf[acfFieldName] = value;
-                    }
-                } else {
-                    acf[acfFieldName] = null;
-                }
-                break;
-            default: // 'singleLineText', 'multilineText', 'email', 'url', 'singleSelect', 'phoneNumber', 'rollup', 'date, 'dateTime'
-                if (value && value.length > 0) {
-                    acf[acfFieldName] = value;
-                } else {
-                    acf[acfFieldName] = null;
-                }
-
-                break;
+                    featuredMedia = meta.attachments[airtableFieldName] && meta.attachments[airtableFieldName].wordPressMediaId;
+                };
+            } else {
+                featuredMedia = parseInt(record.getCellValue(params.wordpress.featured_media));
+            }
         };
-    };
 
-    console.log(acf);
+        // prepare ACF content
+        let acf = {};
+        for (const acfFieldName of Object.keys(params.wordpress.acf || {})) {
+            // determine what the configs for that acf are
+            var airtableFieldName;
+            let wordpressDetails = {};
+            if (typeof(params.wordpress.acf[acfFieldName]) == 'string') {
+                airtableFieldName = params.wordpress.acf[acfFieldName];
+            } else {
+                airtableFieldName = params.wordpress.acf[acfFieldName].field;
+                wordpressDetails.model = params.wordpress.acf[acfFieldName].model;
+            }
 
-    // perform the actual update to WordPress
-    let response = await postToWordPress(params.wordpress.postType, wordpressPostId, title, content, featuredMedia, acf)
-    console.log(response);
+            // get the Airtable field and process it
+            let field = table.getField(airtableFieldName);
+            let value = record.getCellValueAsString(airtableFieldName);
+            switch(field.type) {
+                case 'multipleAttachments':
+                    let newMeta = await findOrCreateWordpressAttachment(table, record, airtableFieldName, meta);
+                    if (newMeta) {
+                        meta = newMeta;
+                        acf[acfFieldName] = meta.attachments[airtableFieldName] && meta.attachments[airtableFieldName].wordPressMediaId;
+                    }
+                    // TODO: else?
+                    // TODO we could make this cleaner by passing the value-as-reference meta var to findOrCreateWordpressAttachment and deal with updating meta within that function
+                    break;
+                case 'multipleSelects':
+                case 'singleSelect':
+                case 'multipleLookupValues':
+                case 'formula':
+                    if (value && value.length > 0) {
+                        if (wordpressDetails.model) {
+                            let relatedModels = await findOrCreateRelatedModels(field, record, wordpressDetails, meta);
+                            if (relatedModels && relatedModels.length > 0) acf[acfFieldName] = relatedModels;
+                        } else {
+                            acf[acfFieldName] = value;
+                        }
+                    } else {
+                        acf[acfFieldName] = null;
+                    }
+                    break;
+                default: // 'singleLineText', 'multilineText', 'email', 'url', 'singleSelect', 'phoneNumber', 'rollup', 'date, 'dateTime'
+                    if (value && value.length > 0) {
+                        acf[acfFieldName] = value;
+                    } else {
+                        acf[acfFieldName] = null;
+                    }
 
-    // update meta information in the record, as well as optional fields for details
-    meta.wordPressResponse = response;
-    let updateParams = {}
-    updateParams[metaFieldName] = JSON.stringify(meta);
-    if (wordPressIdFieldName) updateParams[wordPressIdFieldName] = response.id.toString();
-    if (wordPressUrlFieldName) updateParams[wordPressUrlFieldName] = response.link;
-    if (lastSyncFieldName) updateParams[lastSyncFieldName] = response.modified_gmt + 'Z'; // the WordPress response does not include Z!
-    if (wordPressMediaIdFieldName) updateParams[wordPressMediaIdFieldName] = meta['attachments'] && Object.keys(meta['attachments']).map((att) => meta['attachments'][att].wordPressMediaId).join(',');
-    await table.updateRecordAsync(record, updateParams);
+                    break;
+            };
+        };
+
+        // perform the actual update to WordPress
+        let response = await postToWordPress(params.wordpress.postType, wordpressPostId, title, content, featuredMedia, acf)
+        console.log(response);
+
+        // update meta information in the record, as well as optional fields for details
+        meta.wordPressResponse = response;
+        let updateParams = {}
+        updateParams[metaFieldName] = JSON.stringify(meta);
+        if (wordPressIdFieldName) updateParams[wordPressIdFieldName] = response.id.toString();
+        if (wordPressUrlFieldName) updateParams[wordPressUrlFieldName] = response.link;
+        if (lastSyncFieldName) updateParams[lastSyncFieldName] = response.modified_gmt + 'Z'; // the WordPress response does not include Z!
+        if (wordPressMediaIdFieldName) updateParams[wordPressMediaIdFieldName] = meta['attachments'] && Object.keys(meta['attachments']).map((att) => meta['attachments'][att].wordPressMediaId).join(',');
+        await table.updateRecordAsync(record, updateParams);
+    }
+
+    console.log("Terminé");
 }
 
-console.log("Terminé");
+main();
