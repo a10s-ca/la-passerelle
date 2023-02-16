@@ -50,3 +50,51 @@ Pour éviter la confusion :
 
 * un clic sur le bouton dans la table du Menu exécute l'opération configurée dans l'enregistrement concerné du menu ;
 * un clic sur le bouton dans une autre table synchronise un seul champ.
+
+## [Avancé] Paramètres par défaut pour le script principal
+
+Une autre approche pour répondre au besoin décrit à l'exemple précédent est de définir des paramètres par défaut qui s'appliqueront à tous les appels au script principal. Les paramètres passés lors de l'appel au script auront priorité sur les paramètres par défaut.
+
+Les paramètres par défaut doivent être passés par la variable d'entrée `defaultParams` sous la forme d'une version «stringifiée» d'un objet de configuration.
+
+Cette chaîne de caractères peut être préparée par un bloc de script distinct du script principal. Ainsi, l'automatisation contenant le script principal peut prendre la forme suivante:
+
+![Exemple d'automatisation pour les paramètres par défaut](../images/defaultParams.png)
+
+Dans cette automatisation, le second script correspond simplement au script principal. Le premier script contient simplement un objet dont les clés correspondent aux noms des tables, et les valeurs contiennent un objet de configuration. Par exemple:
+
+```
+let defaultParams = {
+    'Artistes': {
+        airtable: {
+            table: 'Artistes',
+            wpIdField: 'Identifiant WordPress',
+            ...
+        },
+        wordpress: {
+            postType: 'artiste',
+            acf: {
+                    'nom': 'Nom',
+                    'prenom': 'Prénom',
+                    'courriel': 'Courriel',
+                    ...
+            },
+            'content': 'Contenu',
+            'featured_media': 'Photo'
+        }
+    },
+    'Oeuvres': {
+        airtable: {
+            table: 'Oeuvres',
+            ...
+        },
+        wordpress: {
+          ...
+        }
+    }
+}
+
+output.set('defaultParams', JSON.stringify(defaultParams));
+```
+
+La valeur de sortie du premier bloc de script doit être configuré comme variable d'entrée du deuxième bloc de script.

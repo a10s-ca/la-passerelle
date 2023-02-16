@@ -36,6 +36,8 @@ let response = await remoteFetchAsync(webhookUrl, {
 });
 ```
 
+Les paramètres passés de cette façon seront fusionnés avec les paramètres par défaut, s'ils existent.
+
 ## Correspondance des champs
 
 La clé `params.wordpress` contient les configuration pour faire correspondre les entrées dans WordPress avec les champs de la table Airtable choisie.

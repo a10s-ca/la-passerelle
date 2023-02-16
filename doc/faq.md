@@ -63,4 +63,8 @@ La présence de plusieurs modes de synchronisation, pour plusieurs tables dans u
 
 ### Comment faire pour éviter de dupliquer les confirmations des correspondance de champs dans plusieurs extensions?
 
-Il est possible de créer une extension polyvalent qui répond à la plupart des besoins, et qui contient toutes les tables de correspondances, pour toutes les tables, à un seul endroit. Cette stratégie est décrite dans [un exemple avancé](../doc/exemples.md#avancé-un-seul-script-pour-plusieurs-types-dopérations-et-pour-maintenir-une-seule-table-de-correspondances).
+Il est possible de créer une extension polyvalente qui répond à la plupart des besoins, et qui contient toutes les tables de correspondances, pour toutes les tables, à un seul endroit. Cette stratégie est décrite dans [un exemple avancé](../doc/exemples.md#avancé-un-seul-script-pour-plusieurs-types-dopérations-et-pour-maintenir-une-seule-table-de-correspondances).
+
+Par contre, cette stratégie ne peut pas être utilisée dans les automatisations.
+
+Une approche alternative qui peut également être utilisée dans les automatisations consiste à définir des paramètres par défaut directement dans l'automatisation qui héberge le script principal. Cette stratégie est décrite dans [un autre exemple avancé](../doc/exemples.md#avancé-paramètres-par-défaut-pour-le-script-principal).
