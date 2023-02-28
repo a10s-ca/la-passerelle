@@ -5,7 +5,8 @@ if (config.defaultParams) defaultParams = JSON.parse(config.defaultParams);
 let hookParams = {};
 if (config.params) hookParams = JSON.parse(config.params);
 let params = { ...defaultParams[hookParams.airtable.table], ...hookParams }; // first level merge of default and hook params
-params.airtable = { ...defaultParams[hookParams.airtable.table].airtable, ...params.airtable } // we do not need deep merging except for airtable params
+params.airtable = { ...defaultParams[hookParams.airtable.table].airtable, ...params.airtable }
+params.wordpress = { ...defaultParams[hookParams.airtable.table].wordpress, ...params.wordpress }
 
 // Wordpress API details as constants
 const WORDPRESSINSTANCEURL = config.wordpressInstanceUrl;
