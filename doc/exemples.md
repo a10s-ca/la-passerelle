@@ -20,6 +20,15 @@ Il peut arriver que la synchronisation d'une vue (ou d'une table) en entier ne f
 
 Dans ce cas, il est recommandé d'appeler le script principal pour chaque enregistrement, comme illustré dans [loopOverRecordsSync.js](../scripts/loopOverRecordsSync.js)
 
+## Synchroniser des données depuis une automatisation Airtable
+
+L'environnement d'exécution des automatisations dans Airtable est légèrement différent de celui des extensions. Notamment:
+
+* les API `input` et `output` ne sont pas disponibles;
+* l'appel au webhook du script principal doit être réalisé avec `fetch` plutôt que `remoteFetchAsync`.
+
+L'exemple précédent de synchronisation d'un seul enregistrement est repris pour une automatisation dans [automationRecordSync.js](../scripts/automationRecordSync.js). Dans cet exemple, la valeur `{{recordId}}` doit correspondre à un identificant d'enregistrement dans la table concernée, qui peut être obtenu de différentes façons, par exemple par une variable d'entrée.
+
 ## [Avancé] Un seul script pour plusieurs types d'opérations, et pour maintenir une seule table de correspondances
 
 Dans le cas où plusieurs tables doivent être synchronisées, avec des variantes pour un seul enregistrement à la fois, ou une vue entière, ou la table entière, il peut devenir compliqué de gérer les nombreuses extensions. Cette complexité affecte à la fois les développeurs qui configurent les extensions, que les utilisateurs qui doivent naviguer à travers les tables et les extensions.
