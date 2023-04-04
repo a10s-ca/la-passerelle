@@ -40,7 +40,7 @@ Des [exemples de script](doc/exemples.md) sont disponibles.
 
 ## Comment soumettre des suggestions? Comment rapporter un problème?
 
-Si vous rencontrez un problème («bogue») en utilisant La Passerelle, ou si vous avez une idée d'une nouvelle fonctionnalité utile, nous vous invitons à documenter le besoin dans la section [Issues](./issues). Soyez le plus précis possible. Dans le cas d'un bogue, il sera utile de décrire précisément les données, la configuration de La Passerelle, le message d'erreur ou le comportement détaillé, et ce qui était attendu.
+Si vous rencontrez un problème («bogue») en utilisant La Passerelle, ou si vous avez une idée d'une nouvelle fonctionnalité utile, nous vous invitons à documenter le besoin dans la section [Issues](https://github.com/a10s-ca/la-passerelle/issues). Soyez le plus précis possible. Dans le cas d'un bogue, il sera utile de décrire précisément les données, la configuration de La Passerelle, le message d'erreur ou le comportement détaillé, et ce qui était attendu.
 
 ## Comment contribuer?
 
