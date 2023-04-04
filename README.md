@@ -10,6 +10,8 @@ C’est pour répondre à ce genre de besoins que [RAPAIL](https://rapail.ca/) d
 
 Le présent dépôt de code contient des extraits de scripts Airtable utilisés par RAPAIL pour synchroniser les données de sa base Airtable avec son site web sous WordPress. Ce code, qui s’appuie sur différentes principes pour répondre à une série de besoins tout en répondant à des contraintes, est complété par une documentation offrant des scénarios d’utilisation en réponse à des besoins types.
 
+Ce projet a été rendu possible grâce à l'appui du programme [Exploration et déploiement numérique](https://www.calq.gouv.qc.ca/aides/exploration-et-deploiement-numerique-organismes) du [Conseil des arts et des lettres du Québec](https://www.calq.gouv.qc.ca/).
+
 ## Guide de démarrage et d'installation
 
 L'utilisation de La passerelle demande de compléter plusieurs étapes de configuration dans Airtable et dans WordPress. Ces étapes sont présentées dans le [guide de démarrage et d'installation](doc/installation.md)
@@ -28,7 +30,6 @@ Dans tous les cas, il s'agit de faire un appel au lien HTTP («webhook») du scr
 
 La Passerelle doit stocker certaines métadonnées relatives aux informations disponibles dans WordPress et dans Airtable et pour garder des traces des identifiants de contenus et de médias dans les deux système. Il est donc essentiel de prévoir un champ de type «Long text» dans les tables à synchroniser. Par défaut, le script cherche les données dans un champ nommé «meta», mais il est possible de spécifier un autre nom de champ. Cette option, et d'autres options liées à la consignation de métadonnées de la synchroniser (date de dernière synchronisation, URL du contenu dans WordPress, etc.), sont documentées dans la section [API](doc/api.md).
 
-
 ### Références
 
 La page dédiée à l'[API](doc/api.md) contient les références détaillées sur les options du script, le types de champs, etc.
@@ -37,6 +38,17 @@ La [foire aux questions](doc/faq.md) offre des solutions à des problèmes connu
 
 Des [exemples de script](doc/exemples.md) sont disponibles.
 
+## Comment soumettre des suggestions? Comment rapporter un problème?
+
+Si vous rencontrez un problème («bogue») en utilisant La Passerelle, ou si vous avez une idée d'une nouvelle fonctionnalité utile, nous vous invitons à documenter le besoin dans la section [Issues](./issues). Soyez le plus précis possible. Dans le cas d'un bogue, il sera utile de décrire précisément les données, la configuration de La Passerelle, le message d'erreur ou le comportement détaillé, et ce qui était attendu.
+
+## Comment contribuer?
+
+Les contributions au code ou à la documentation de La Passerelle sont bienvenues! Pour contribuer:
+
+1. Faites un «fork» du projet.
+2. Apportez les modifications (et testez les, dans le code de changements au code).
+3. Faites une «pull request» sur vos modifications.
 
 ## Notes sur l'origine du projet
 
