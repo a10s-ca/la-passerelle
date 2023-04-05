@@ -10,7 +10,7 @@ C’est pour répondre à ce genre de besoins que [RAPAIL](https://rapail.ca/) d
 
 Le présent dépôt de code contient des extraits de scripts Airtable utilisés par RAPAIL pour synchroniser les données de sa base Airtable avec son site web sous WordPress. Ce code, qui s’appuie sur différentes principes pour répondre à une série de besoins tout en répondant à des contraintes, est complété par une documentation offrant des scénarios d’utilisation en réponse à des besoins types.
 
-Ce projet a été rendu possible grâce à l'appui du programme [Exploration et déploiement numérique](https://www.calq.gouv.qc.ca/aides/exploration-et-deploiement-numerique-organismes) du [Conseil des arts et des lettres du Québec](https://www.calq.gouv.qc.ca/).
+Ce projet a été rendu possible grâce à l'appui du programme [Exploration et déploiement numérique](https://www.calq.gouv.qc.ca/aides/exploration-et-deploiement-numerique-organismes) du [Conseil des arts et des lettres du Québec](https://www.calq.gouv.qc.ca/), et du programme [Innovation et développement du secteur](https://conseildesarts.ca/financement/subventions/appuyer-la-pratique-artistique/innovation-et-developpement-du-secteur) du [Conseil des arts du Canada](https://conseildesarts.ca/).
 
 ## Guide de démarrage et d'installation
 
