@@ -44,7 +44,7 @@ La clé `params.wordpress` contient les configuration pour faire correspondre le
 
 Pour tous les types de contenus (articles, pages ou types de contenus personnalisés), le script permet d'indiquer les valeurs suivantes:
 
-* `params.wordpress.title`: le titre du contenu
+* `params.wordpress.title`: le titre du contenu (voir la note plus bas au sujet du titre)
 * `params.wordpress.content`: le nom d'un champ quelconque dont le contenu, converti en texte, sera utilisé comme contenu principal du «post» dans WordPress
 * `params.wordpress.featured_media`: le choix du média principal du «post», sous la forme de soit:
  * l'identifiant numérique du média WordPress, dans un champ texte ou nombre
@@ -54,6 +54,8 @@ Dans le cas des types de contenus personnalisés («custom post types») qui uti
 
 * `'nom du champ ACF': 'nom du champ Airtable'` dans la plupart des cas
 * `'nom du champ ACF': {objet de configuration avancée}` pour les correspondances de champs impliquant des modèles liés (relations et taxonomies). Les objets de configuration avancés sont décrits dans les sections dédiées plus bas.
+
+Note au sujet du titre: la valeur dans `params.wordpress.title` est une chaîne de caractères qui sera utilisée telle quelle comme titre de contenu dans WordPress. Il est possible de ne pas utiliser ce paramètre, et de plutôt indiquer le nom d'un _champ Airtable_ contenant la valeur souhaitée pour le titre dans la clé `params.airtable.titleField`.
 
 
 ## Métadonnées
