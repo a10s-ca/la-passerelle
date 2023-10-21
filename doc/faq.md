@@ -53,6 +53,10 @@ Il n'est pas possible de synchroniser le «lookup» d'une pièce jointe, par exe
 * la synchronisation de médias par des identifiants en «lookup» ne fonctionne seulement que si l'image est présente. Autrement, le script se termine sur une erreur
 * cette stratégie est limitée à un seul média en «lookup»
 
+### Quel est l'impact sur la base de données Wordpress?
+
+Il est possible que le volume de synchronisations avec Wordpress ait un impact sur la taille des tables wp_postmeta et wp_posts à long terme. Il est recommandé d'optimiser les bases de données à interval régulier, par exemple avec l'extension WP Optimize.
+
 ## Expérience utilisateur
 
 ### Comment simplifier l'expérience des utilisateurs lorsque plusieurs options de synchronisation sont disponibles?
