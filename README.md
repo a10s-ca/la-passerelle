@@ -28,11 +28,11 @@ Dans tous les cas, il s'agit de faire un appel au lien HTTP («webhook») du scr
 
 ### Éléments requis dans la table à synchroniser
 
-La Passerelle doit stocker certaines métadonnées relatives aux informations disponibles dans WordPress et dans Airtable et pour garder des traces des identifiants de contenus et de médias dans les deux système. Il est donc essentiel de prévoir un champ de type «Long text» dans les tables à synchroniser. Par défaut, le script cherche les données dans un champ nommé «meta», mais il est possible de spécifier un autre nom de champ. Cette option, et d'autres options liées à la consignation de métadonnées de la synchroniser (date de dernière synchronisation, URL du contenu dans WordPress, etc.), sont documentées dans la section [API](doc/api.md).
+La Passerelle doit stocker certaines métadonnées relatives aux informations disponibles dans WordPress et dans Airtable pour garder des traces des identifiants de contenus et de médias dans les deux système. Il est donc essentiel de prévoir un champ de type «Long text» dans les tables à synchroniser. Par défaut, le script cherche les données dans un champ nommé «meta», mais il est possible de spécifier un autre nom de champ. Cette option, et d'autres options liées à la consignation de métadonnées de la synchroniser (date de dernière synchronisation, URL du contenu dans WordPress, etc.), sont documentées dans la section [API](doc/api.md).
 
 ### Références
 
-La page dédiée à l'[API](doc/api.md) contient les références détaillées sur les options du script, le types de champs, etc.
+La page dédiée à l'[API](doc/api.md) contient les références détaillées sur les options du script, les types de champs, etc.
 
 La [foire aux questions](doc/faq.md) offre des solutions à des problèmes connus du script, ou des suggestion d'approches pour répondre à des besoins spécifiques de synchronisation de données.
 
@@ -47,7 +47,7 @@ Si vous rencontrez un problème («bogue») en utilisant La Passerelle, ou si vo
 Les contributions au code ou à la documentation de La Passerelle sont bienvenues! Pour contribuer:
 
 1. Faites un «fork» du projet.
-2. Apportez les modifications (et testez les, dans le code de changements au code).
+2. Apportez les modifications (et testez les, dans le cas de changements au code).
 3. Faites une «pull request» sur vos modifications.
 
 ## Notes sur l'origine du projet
@@ -56,7 +56,7 @@ Au moment de démarrer le projet, la seule option disponible pour intégrer des 
 
 Cette extension présentait par ailleurs des limitations fonctionnelles (notamment le fait que les données ne soient pas synchronisées sous la forme de contenus natifs WordPress), en plus de ne pas être supportée par son développeur.
 
-Pour répondre à des objectifs de maintenabilité, notre projet tente de répondre aux différents besoins sans développer d’extension WordPress, ou ajouter dans le projet WordPress des dépendances sur des extensions qui ne sont pas largement utilisée (et donc avec une bonne probabilité d’être maintenue à long terme).
+Pour répondre à des objectifs de maintenabilité, notre projet tente de répondre aux différents besoins sans développer d’extension WordPress, ni ajouter dans le projet WordPress des dépendances à des extensions qui ne sont pas largement utilisées (et donc avec une bonne probabilité d’être maintenue à long terme).
 
 ## Licence
 
