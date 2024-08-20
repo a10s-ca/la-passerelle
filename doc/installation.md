@@ -63,7 +63,7 @@ Pour compléter la configuration de la quatrième variable, des données de test
 
 Nous suggérons de créer une extension dédiée à ce test. Pour ce faire:
 
-* retournez à l'interface principale de votre base en cliquant sur «Data» dans la barre d'outil du haut de l'écran
+* retournez à la section "données" votre base en cliquant sur «Data» dans la barre d'outil du haut de l'écran
 * cliquez sur «Extensions»
 * cliquez sur «+ Add an extension», choisissez l'extension «Scripting», puis cliquez sur «Add extension»
 * la fenêtre d'édition de script apparaîtra. Au besoin, fermez la fenêtre de présentation en cliquant sur «Get Started», puis «Start from scratch»
