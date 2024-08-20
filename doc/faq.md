@@ -38,7 +38,7 @@ deviendra plutôt ceci:
 
 ### Comment faire pour importer du texte mis en forme (gras, italique) dans WordPress?
 
-L'API d'Airtable ne permet pas d'obtenir la mise en forme native des champs texte long avec du «rich formatting». Nous suggérons donc de _ne pas_ utiliser l'option «rich formatting» et d'inclure des balises HTML simples dans le champ long texte, par exemple `<b></b>`, `<i></i>`, etc. Notez qu'il n'est pas nécessaire d'utiliser de balises pour les changements de lignes (~~`<br/>`~~).
+L'API d'Airtable ne permet pas d'obtenir la mise en forme native des champs texte long avec du «rich formatting». Nous suggérons donc de _ne pas_ utiliser l'option «rich formatting» et d'inclure des balises HTML simples dans le champ long texte, par exemple `<b></b>`, `<i></i>`, etc. Notez qu'il n'est pas nécessaire d'utiliser de balises pour les changements de lignes (`<br/>`).
 
 ### Comment faire pour synchroniser vers Airtable une pièce jointe tirée d'une table liée, à travers un champ de type «lookup»?
 
