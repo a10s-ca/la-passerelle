@@ -1,6 +1,6 @@
-# Installation de La passerelle
+# Installation de La Passerelle
 
-L'utilisation de La passerelle demande de compléter les étapes suivantes:
+L'utilisation de La Passerelle demande de compléter les étapes suivantes:
 
 1. Préparer l'instance WordPress qui recevra les données.
 2. Préparer la base Airtable qui émettra les données.
@@ -30,7 +30,7 @@ Enfin, il faut créer un usager et son mot de passe pour le script Airtable. Les
 
 Pour réaliser les synchronisations, il est nécessaire d'installer le script de synchronisation principal dans la base Airtable qui contient les données maîtres.
 
-> **Note:** Il est possible de configurer et d'utiliser le script de synchronisation de plusieurs façons dans Airtable. Nous présentons ici l'approche que nous préconisons, et qui consiste à copier le code principal _une seule fois_ dans Airtable, puis de l'appeler depuis des extensions et des automatisations. Si vous comprenez bien le fonctionnement du code, les enjeux de sécurité, et les outils disponibles dans Airtable, vous pouvez faire des choix différents.
+> **Note:** Il est possible de configurer et d'utiliser le script de synchronisation de plusieurs façons dans Airtable. Nous présentons ici l'approche que nous préconisons, et qui consiste à copier le code principal _une seule fois_ dans Airtable, puis de l'appeler depuis des automatisations. Si vous comprenez bien le fonctionnement du code, les enjeux de sécurité, et les outils disponibles dans Airtable, vous pouvez faire des choix différents.
 
 #### 2.1. Créer une automatisation déclenchée par un lien HTTP («webhook»)
 
