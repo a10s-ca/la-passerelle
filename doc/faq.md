@@ -72,3 +72,23 @@ Il est possible de créer une extension polyvalente qui répond à la plupart de
 Par contre, cette stratégie ne peut pas être utilisée dans les automatisations.
 
 Une approche alternative qui peut également être utilisée dans les automatisations consiste à définir des paramètres par défaut directement dans l'automatisation qui héberge le script principal. Cette stratégie est décrite dans [un autre exemple avancé](../doc/exemples.md#avancé-paramètres-par-défaut-pour-le-script-principal).
+
+#### Comment retrouver le nom d'un champ à partir de son ID ?
+
+Si vous avez utilisé l'ID d'un champ dans votre script, mais vous n'arrivez plus à retrouver de quel champ il s'agit, vous pouvez utilise le script suivant au sein d'une extension :
+
+````
+let key = await input.textAsync("Entrez l'id du champ :");
+
+let allFields = {}
+
+for (const table of base.tables) {
+
+    for (const field of table.fields) {
+        allFields[`${field.id}`] = "**Table** : " + table.name + " | **Champ** : " + field.name
+    }
+
+}
+
+output.markdown(allFields[key]);
+````
