@@ -113,10 +113,7 @@ Remplacez tous les {{placeholders}} par les informations provenant de votre base
 
 > **Note:** Nous utilisons les IDs des tables Airtable et les ID des champs Airtable au lieu de leur nom afin de rendre le script résilient au renommage des champs et des tables. Cela rend par contre le script plus difficile à lire, c'est pourquoi nous ajoutons les noms des tables et des champs en commentaire sur chaque ligne où ils sont référencés. Vous pouvez choisir d'utiliser les noms des tables et les noms des champs au lieu des IDs. 
 
-Pour obtenir l'ID d'un champ, vous pouvez :
-- utiliser le Field Manager https://support.airtable.com/docs/finding-airtable-ids
-- utiliser la documentation API de votre base https://airtable.com/YOUR_BASE_ID/api/docs (remplacez YOUR_BASE_ID par l'ID de votre base)
-- utiliser le script *!!!*
+Pour obtenir l'ID d'un champ, vous pouvez utiliser le Field Manager (voir l'article [Finding Airtable ids](https://support.airtable.com/docs/finding-airtable-ids))
 
 Pour obtenir l'ID d'une table, vous pouvez utiliser le script suivant, dans une extension : *!!!*
 
