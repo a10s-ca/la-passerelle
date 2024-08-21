@@ -36,6 +36,35 @@ Pour réaliser les synchronisations, il est nécessaire d'installer le script de
 
 > **Note:** Il est possible de configurer et d'utiliser le script de synchronisation de plusieurs façons dans Airtable. Nous présentons ici l'approche que nous préconisons, et qui consiste à copier le code principal _une seule fois_ dans Airtable, puis de l'appeler depuis des automatisations. Si vous comprenez bien le fonctionnement du code, les enjeux de sécurité, et les outils disponibles dans Airtable, vous pouvez faire des choix différents.
 
+#### 2.0. Créer les champs nécessaires dans la base de données
+
+Dans chaque table que vous souhaitez synchroniser via La Passerelle, créez les champs suivant :
+
+- Afficher sur le site web (type : Case à cocher)
+- Date de synchronisation (type : Date, format : ISO, inclure l'heure)
+- Date de modification (type : Date/heure de dernière modification, Champs : Champs spécifiques, cocher tous les champs qui doivent déclencher une mise à jour sur le site web, format : ISO, inclure l'heure, )
+- Meta (type : Texte long)
+- ID Wordpress (type : Texte sur une seule ligne)
+- Statut de synchronisation (type : Formule)
+
+Voici la formule à copier dans le champ Statut de synchronisation :
+
+````
+IF({Afficher sur le site web},
+
+  IF(NOT({Meta}), "à synchroniser",
+
+  IF(SEARCH('"status":"draft"', {Meta}),"à synchroniser",
+
+    IF(SEARCH('"status":"publish"', {Meta}), 
+
+      IF(IS_AFTER({Date de synchronisation}, {Date de modification}),
+          "à jour (publié)", "à synchroniser")))),
+
+  IF(SEARCH('"status":"publish"', {Meta}), "à passer en brouillon",
+  IF(SEARCH('"status":"draft"', {Meta}), "brouillon")))
+````
+
 
 #### 2.1. Créer une automatisation déclenchée par un lien HTTP («webhook»)
 
@@ -58,7 +87,7 @@ La fenêtre d'édition de script vous sera présentée. Supprimez le contenu de 
 let defaultParams = {
     '{{ID de la table}}': { // {{Nom de la table}}
         airtable: {
-            table: 'ID de la tables', // {{Nom de la table}}
+            table: 'ID de la table', // {{Nom de la table}}
             wpIdField: '{{ID du champ contenant l'identifiant wordpress}}', // {{Nom du champ contenant l'identifiant wordpress}}
             ...
         },
@@ -89,43 +118,43 @@ Pour obtenir l'ID d'un champ, vous pouvez :
 - utiliser la documentation API de votre base https://airtable.com/YOUR_BASE_ID/api/docs (remplacez YOUR_BASE_ID par l'ID de votre base)
 - utiliser le script *!!!*
 
+Pour obtenir l'ID d'une table, vous pouvez utiliser le script suivant, dans une extension : *!!!*
+
+````
+for (const table of base.tables) {
+    output.markdown(`**${table.name}** : ${table.id}`);
+}
+
+````
+
 Voici un exemple de ce à quoi pourrait ressembler votre code, une fois les {{placeholders}} remplacés :
 
 ```
 let defaultParams = {
-    'Artistes': {
+    'tblb00KvosFf8HmdE': { // Dossiers
         airtable: {
-            table: 'Artistes',
-            wpIdField: 'Identifiant WordPress',
-            ...
+            table: 'tblb00KvosFf8HmdE', // Dossiers
+            wpIdField: 'fldgxpzXiXxJGPxMz', // ID Wordpress
+            titleField: "fldFJ5wSQC59MSJnO", // Nom du dossier
+            metaFieldName: 'fldGmie09tmm6HTeV', // Meta
+            lastSyncFieldName: 'fldG0r0AY1bZ4PdOe', // Date de synchronisation
         },
         wordpress: {
-            postType: 'artiste',
+            postType: 'membre',
+            featured_media: 'fldjxnQtsSB4ZvHH3', // Image répertoire
+            content: 'fldPIMUrW1c4JmDqV', // Description répertoire
+            status: 'publish',
             acf: {
-                    'nom': 'Nom',
-                    'prenom': 'Prénom',
-                    'courriel': 'Courriel',
-                    ...
+                    'styles': 'fldBRkOYenTJaaqoG', // Styles musicaux CQM
             },
-            'content': 'Contenu',
-            'featured_media': 'Photo'
         }
     },
-    'Oeuvres': {
-        airtable: {
-            table: 'Oeuvres',
-            ...
-        },
-        wordpress: {
-          ...
-        }
-    }
 }
 
 output.set('defaultParams', JSON.stringify(defaultParams));
 ```
 
-La valeur de sortie du premier bloc de script doit être configuré comme variable d'entrée du deuxième bloc de script. *!!!*
+La valeur de sortie de ce premier bloc de script sera configurée dans une étape suivante comme variable d'entrée du deuxième bloc de script (_defaultParams_).
 
 
 #### 2.3. Installer le script de synchronisation
@@ -145,6 +174,7 @@ Dans la section de gauche de la fenêtre d'édition du script, vous devrez crée
 |wordpressUserName|Le nom de l'usager WordPress associé au mot de passe d'application crée à l'étape 1.2|
 |applicationPassword|Le mot de passe d'application créé à l'étape 1.2|
 |params|Vide pour l'instant.|
+|defaultParams|*!!!*|
 
 Votre automatisation devrait ressembler à ceci :
 
