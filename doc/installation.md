@@ -52,7 +52,7 @@ Ce script contient simplement un objet dont les clés correspondent aux noms des
 
 Dans l'automatisation, sous «Run actions», cliquez sur «+ Add action», puis sélectionnez l'option «Run script».
 
-La fenêtre d'édition de script vous sera présentée. Supprimez le contenu de la section «Code» et copiez y le "squelette" suivant :
+La fenêtre d'édition de script vous sera présentée. Supprimez le contenu de la section «Code» et copiez-y le code suivant :
 
 ````
 let defaultParams = {
@@ -80,9 +80,9 @@ output.set('defaultParams', JSON.stringify(defaultParams));
 
 ````
 
-Vous devez maintenant remplacer tous les {{placeholders}} par les informations provenant de votre base de données.
+Remplacez tous les {{placeholders}} par les informations provenant de votre base de données.
 
-Nous utilisons les ID des tables Airtable est les ID des champs Airtable au lieu de leur nom afin de rendre le script résilient au renommage des champs et des tables. Cela rend par contre le script plus difficile à lire, c'est pourquoi nous suggérons d'ajouter les noms des tables et des champs en commentaire sur chaque ligne oû ils sont référencés. Vous pouvez choisir d'utiliser les noms des tables et les noms des champs au lieu des IDs. 
+> **Note:** Nous utilisons les IDs des tables Airtable et les ID des champs Airtable au lieu de leur nom afin de rendre le script résilient au renommage des champs et des tables. Cela rend par contre le script plus difficile à lire, c'est pourquoi nous suggérons d'ajouter les noms des tables et des champs en commentaire sur chaque ligne où ils sont référencés. Vous pouvez choisir d'utiliser les noms des tables et les noms des champs au lieu des IDs. 
 
 Pour obtenir l'ID d'un champ, vous pouvez :
 - utiliser le Field Manager [https://support.airtable.com/docs/finding-airtable-ids]
