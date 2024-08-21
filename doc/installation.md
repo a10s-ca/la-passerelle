@@ -5,7 +5,9 @@ L'utilisation de La Passerelle demande de compléter les étapes suivantes:
 1. Préparer l'instance WordPress qui recevra les données.
 2. Préparer la base Airtable qui émettra les données.
 
+
 ### 1. Préparer l'instance WordPress
+
 
 #### 1.1. Extensions pour les modèles de données
 
@@ -18,6 +20,7 @@ Les scripts de La passerelle ont été testés et sont fonctionnels avec les ext
 
 Ces deux extensions doivent être installées et configurées avant d'utiliser le script Airtable de synchronisation de données.
 
+
 #### 1.2. Nom d'usager et mot de passe
 
 Par ailleurs, afin de permettre un accès sécuritaire aux données, il est nécessaire de prévoir un mécanisme d'authentification. La solution _Application Passwords_ est intégrée à WordPress pour les versions 5.6 et plus récentes. Si vous ne disposez pas de cette extension, il faut l'installer:
@@ -26,11 +29,13 @@ Par ailleurs, afin de permettre un accès sécuritaire aux données, il est néc
 
 Enfin, il faut créer un usager et son mot de passe pour le script Airtable. Les étapes à suivre sont décrites à la section «Getting Credentials / Generating Manually» du [guide d'intégration de Application Passwords](https://make.wordpress.org/core/2020/11/05/application-passwords-integration-guide/). À la fin du processus, notez dans un endroit sécurisé le nom d'usager associé au compte, et le mot de passe d'application (il est important de le noter dès qu'il vous est affiché, car il ne sera pas possible de le récupérer par la suite).
 
+
 ### 2. Préparer la base Airtable
 
 Pour réaliser les synchronisations, il est nécessaire d'installer le script de synchronisation principal dans la base Airtable qui contient les données maîtres.
 
 > **Note:** Il est possible de configurer et d'utiliser le script de synchronisation de plusieurs façons dans Airtable. Nous présentons ici l'approche que nous préconisons, et qui consiste à copier le code principal _une seule fois_ dans Airtable, puis de l'appeler depuis des automatisations. Si vous comprenez bien le fonctionnement du code, les enjeux de sécurité, et les outils disponibles dans Airtable, vous pouvez faire des choix différents.
+
 
 #### 2.1. Créer une automatisation déclenchée par un lien HTTP («webhook»)
 
@@ -40,13 +45,97 @@ Dans «Automations», choisissez «Create automation», et nommez l'automatisati
 
 Copiez le lien disponible sous «Send an example webhook to» et conservez le dans un endroit sécurisé.
 
-#### 2.2. Installer le script de synchronisation
+
+#### 2.2. Installer le script de paramétrage
+
+Ce script contient simplement un objet dont les clés correspondent aux noms des tables, et les valeurs contiennent un objet de configuration. 
+
+Dans l'automatisation, sous «Run actions», cliquez sur «+ Add action», puis sélectionnez l'option «Run script».
+
+La fenêtre d'édition de script vous sera présentée. Supprimez le contenu de la section «Code» et copiez y le "squelette" suivant :
+
+````
+let defaultParams = {
+    '{{ID de la table}}': { // {{Nom de la table}}
+        airtable: {
+            table: 'ID de la tables', // {{Nom de la table}}
+            wpIdField: '{{ID du champ contenant l'identifiant wordpress}}', // {{Nom du champ contenant l'identifiant wordpress}}
+            ...
+        },
+        wordpress: {
+            postType: '{{Nom du post type appropié pour cette table dans Wordpress}}',
+            acf: {
+                    '{{Nom du champ dans Wordpress}}': '{{ID du champ dans Airtable}}', // {{Nom du champ dans Airtable}}
+                    '{{Nom du champ dans Wordpress}}': '{{ID du champ dans Airtable}}', // {{Nom du champ dans Airtable}}
+                    ...
+            },
+            'content': 'Contenu',
+            'featured_media': 'Photo'
+        }
+    },
+    {{Idem pour les autres tables...}}
+}
+
+output.set('defaultParams', JSON.stringify(defaultParams));
+
+````
+
+Vous devez maintenant remplacer tous les {{placeholders}} par les informations provenant de votre base de données.
+
+Nous utilisons les ID des tables Airtable est les ID des champs Airtable au lieu de leur nom afin de rendre le script résilient au renommage des champs et des tables. Cela rend par contre le script plus difficile à lire, c'est pourquoi nous suggérons d'ajouter les noms des tables et des champs en commentaire sur chaque ligne oû ils sont référencés. Vous pouvez choisir d'utiliser les noms des tables et les noms des champs au lieu des IDs. 
+
+Pour obtenir l'ID d'un champ, vous pouvez :
+- utiliser le Field Manager [https://support.airtable.com/docs/finding-airtable-ids]
+- utiliser la documentation API de votre base (https://airtable.com/YOUR_BASE_ID/api/docs) (remplacez YOUR_BASE_ID par le ID de votre base)
+- utiliser le script *!!!*
+
+Voici un exemple de ce à quoi pourrait ressembler votre code, une fois les {{placeholders}} remplacés :
+
+```
+let defaultParams = {
+    'Artistes': {
+        airtable: {
+            table: 'Artistes',
+            wpIdField: 'Identifiant WordPress',
+            ...
+        },
+        wordpress: {
+            postType: 'artiste',
+            acf: {
+                    'nom': 'Nom',
+                    'prenom': 'Prénom',
+                    'courriel': 'Courriel',
+                    ...
+            },
+            'content': 'Contenu',
+            'featured_media': 'Photo'
+        }
+    },
+    'Oeuvres': {
+        airtable: {
+            table: 'Oeuvres',
+            ...
+        },
+        wordpress: {
+          ...
+        }
+    }
+}
+
+output.set('defaultParams', JSON.stringify(defaultParams));
+```
+
+La valeur de sortie du premier bloc de script doit être configuré comme variable d'entrée du deuxième bloc de script. *!!!*
+
+
+#### 2.3. Installer le script de synchronisation
 
 Dans l'automatisation, sous «Run actions», cliquez sur «+ Add action», puis sélectionnez l'option «Run script».
 
 La fenêtre d'édition de script vous sera présentée. Supprimez le contenu de la section «Code» et copiez y le contenu du [script principal](../scripts/main.js).
 
-#### 2.3. Configurer les accès à WordPress et les variables de paramétrage du script
+
+#### 2.4. Configurer les accès à WordPress et les variables de paramétrage du script
 
 Dans la section de gauche de la fenêtre d'édition du script, vous devrez créer quatre variables de configuration. Pour chaque variable, cliquez sur "+ Add input variable", puis entrez les valeurs suivantes dans les champs «Name» et «Value».
 
@@ -57,7 +146,12 @@ Dans la section de gauche de la fenêtre d'édition du script, vous devrez crée
 |applicationPassword|Le mot de passe d'application créé à l'étape 1.2|
 |params|Vide pour l'instant.|
 
-#### 2.4. Générer des données de tests pour l'automatisation
+Votre automatisation devrait ressembler à ceci :
+
+![Exemple d'automatisation pour les paramètres par défaut](../images/defaultParams.png)
+
+
+#### 2.5. Générer des données de tests pour l'automatisation
 
 Pour compléter la configuration de la quatrième variable, des données de test sont nécessaires. Pour les obtenir, il faut réaliser un premier appel de test au script.
 
@@ -74,9 +168,11 @@ Ensuite, il suffit d'exécuter le script de test en cliquant sur le bouton «Run
 
 ![Saisie d'écran de l'extension Scripting de Airtable](../images/airtable2.4.png)
 
+
 > **Note:** Vous pouvez supprimer l'extension utilisée pour le test, elle ne sera plus utile.
 
-#### 2.5. Compléter les configurations des variables de paramétrage du script
+
+#### 2.6. Compléter les configurations des variables de paramétrage du script
 
 Retournez dans la section «Automations» et sélectionnez l'automatisation créée à l'étape 2.1.
 
@@ -90,6 +186,10 @@ Dans la fenêtre d'édition du code, repérez la variable d'entrée `params` cr�
 
 Fermez la fenêtre d'édition du script en cliquant sur «Finish editing».
 
-#### 2.6. Activer l'automatisation
+
+#### 2.7. Activer l'automatisation
 
 Pour activer l'automatisation, il suffit de cliquer sur le bouton rouge indiquant «Off» pour qu'il devienne vert et indique «On».
+
+
+
