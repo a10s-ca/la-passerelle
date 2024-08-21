@@ -59,3 +59,12 @@ Pour éviter la confusion :
 
 * un clic sur le bouton dans la table du Menu exécute l'opération configurée dans l'enregistrement concerné du menu ;
 * un clic sur le bouton dans une autre table synchronise un seul champ.
+
+## Pour une publication automatique selon les règles d'affaires
+
+Champs à ajouter :
+- Statut wordpress (type : Formule)
+- Forcer la synchronisation (type : Sélection unique)
+  
+Champs à modifier :
+- Statut de synchronisation (à modifier selon les règles d'affaires)
