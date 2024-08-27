@@ -171,16 +171,16 @@ Dans la section de gauche de la fenêtre d'édition du script, vous devrez crée
 |wordpressUserName|Le nom de l'usager WordPress associé au mot de passe d'application crée à l'étape 1.2|
 |applicationPassword|Le mot de passe d'application créé à l'étape 1.2|
 |params|Vide pour l'instant.|
-|defaultParams|*!!!*|
+|defaultParams|Sélectionner la valeur de sortie du script précédent|
 
-Votre automatisation devrait ressembler à ceci :
+Votre automatisation devrait ressembler à ceci : *!!!*
 
 ![Exemple d'automatisation pour les paramètres par défaut](../images/defaultParams.png)
 
 
 #### 2.5. Générer des données de tests pour l'automatisation
 
-Pour compléter la configuration de la quatrième variable, des données de test sont nécessaires. Pour les obtenir, il faut réaliser un premier appel de test au script.
+Pour compléter la configuration de la quatrième variable (params), des données de test sont nécessaires. Pour les obtenir, il faut réaliser un premier appel de test au script.
 
 Nous suggérons de créer une extension dédiée à ce test. Pour ce faire:
 
@@ -201,22 +201,94 @@ Ensuite, il suffit d'exécuter le script de test en cliquant sur le bouton «Run
 
 #### 2.6. Compléter les configurations des variables de paramétrage du script
 
-Retournez dans la section «Automations» et sélectionnez l'automatisation créée à l'étape 2.1.
+Retournez dans la section «Automatisations» et sélectionnez l'automatisation créée à l'étape 2.1.
 
-Cliquez sur la déclencheur «When webhook received», puis sur le bouton «Test trigger» dans la section de droite de l'écran. Le message «Step successful» devrait apparaître
+Cliquez sur la déclencheur «Lorsqu'un point d'ancrage est reçu», puis sur le bouton «Tester le déclencheur» dans la section de droite de l'écran. Le message «Étape terminée» devrait apparaître en vert.
 
-Cliquez sur la tâche «Run a script», puis ouvrez la fenêtre d'édition du code avec le bouton «Edit script».
+Cliquez sur l'Action «Exécuter un script», puis ouvrez la fenêtre d'édition du code avec le bouton «Modifier le code».
 
-Dans la fenêtre d'édition du code, repérez la variable d'entrée `params` créée à l'étape 2.3. Dans le champs «Value», insérez le contenu de `params` de la façon suivante:
+Dans la fenêtre d'édition du code, repérez la variable d'entrée `params` créée à l'étape 2.3. Dans le champs «Valeur», insérez le contenu de `params` de la façon suivante:
 
 ![Procédure de sélection d'un paramètre](../images/airtable2.5.gif)
 
-Fermez la fenêtre d'édition du script en cliquant sur «Finish editing».
+Fermez la fenêtre d'édition du script en cliquant sur «Terminer la modification».
 
 
 #### 2.7. Activer l'automatisation
 
-Pour activer l'automatisation, il suffit de cliquer sur le bouton rouge indiquant «Off» pour qu'il devienne vert et indique «On».
+Pour activer l'automatisation, il suffit de cliquer sur le bouton rouge indiquant «Désactivée» pour qu'il devienne vert et indique «Activée».
 
+#### 2.8 Créer une automatisation d'appel pour la publication et la mise à jour
 
+Créer une automatisation
 
+Ajouter un déclencheur / Lorsqu'une entrée correspond aux condition
+Tableau : Sélectionner le tableau qui contient vos données à envoyer sur Wordpress
+Conditions : Quand "Statut de synchronisation" contient "à synchroniser"
+
+"Ajouter une action ou une logique avancée" / Choisir "Excécuter le script"
+
+Add input variable
+Nom : table_id
+Valeur : l'id Airtable de la table contenant les données (commence par tbl)
+
+Add input variable
+Nom : record_id
+Valeur : + / Insert value from field / ID de l'entrée Airtable
+
+Add input variable
+Nom : status
+Valeur : publish
+
+Add input variable
+Nom : custom_post_type_name
+Valeur : le nom de votre custoom post type dans Wordpress
+
+Add input variable
+Nom : webhook_url
+Valeur : coller le lien de l'étape 2.1
+
+Dans l'encadré "Code", supprimer le contenu par défaut et copier le code suivant :
+
+````
+const inputConfig = input.config();
+
+var config = {};
+
+// we stringify the params key, which will be double-stringified in the request body, so that we can
+// pass it serialized to the automation script, which will deserialize it. This is because Airtable will not
+// allow us to use specific keys in automation script config.
+config.params = JSON.stringify({
+    syncType: 'record',
+    airtable: {
+        table: inputConfig.table_id,
+        recordId: inputConfig.record_id
+    },
+    wordpress: {
+        status: inputConfig.status,
+        postType: inputConfig.custom_post_type_name
+    }
+});
+
+let response = await fetch(inputConfig.webhook_url, {
+    method: 'POST',
+    body: JSON.stringify(config),
+    headers: {
+        'Content-Type': 'application/json'
+    }
+});
+console.log(await response.text());
+````
+
+Cliquer sur "Terminer la modification".
+
+Activer l'automatisation.
+
+#### 2.9 Créer une automatisation d'appel pour passer en brouillon ("dépublier")
+
+Répétez l'étape précédente, avec les deux variations suivantes :
+
+Dans le déclencheur, utilisez la condition suivante :
+Quand "Statut de synchonisation" contient " à passer en brouillon"
+
+Dans le script, la valeur l'input variable "status" sera "draft" au lieu de "publish".
