@@ -165,7 +165,7 @@ La fenêtre d'édition de script vous sera présentée. Supprimez le contenu de 
 
 Dans la section de gauche de la fenêtre d'édition du script, vous devrez créer quatre variables de configuration. Pour chaque variable, cliquez sur "+ Add input variable", puis entrez les valeurs suivantes dans les champs «Name» et «Value».
 
-|Name|Value|
+|Nom|Valeur|
 |----|-----|
 |wordpressInstanceUrl|L'URL de votre site WordPress, sous la forme «https://nomdedomaine.com/» (en incluant le symbole `/` final)|
 |wordpressUserName|Le nom de l'usager WordPress associé au mot de passe d'application crée à l'étape 1.2|
@@ -222,30 +222,22 @@ Créer une automatisation
 Nommez votre automatisation "{{Nom de la table}} - publier et/ou mettre à jour".
 
 Ajouter un déclencheur / Lorsqu'une entrée correspond aux condition
+
 Tableau : Sélectionner le tableau qui contient vos données à envoyer sur Wordpress
+
 Conditions : Quand "Statut de synchronisation" contient "à synchroniser"
 
 "Ajouter une action ou une logique avancée" / Choisir "Excécuter le script"
 
 Add input variable
-Nom : table_id
-Valeur : l'id Airtable de la table contenant les données (commence par tbl)
 
-Add input variable
-Nom : record_id
-Valeur : + / Insert value from field / ID de l'entrée Airtable
-
-Add input variable
-Nom : status
-Valeur : publish
-
-Add input variable
-Nom : custom_post_type_name
-Valeur : le nom de votre custoom post type dans Wordpress
-
-Add input variable
-Nom : webhook_url
-Valeur : coller le lien de l'étape 2.1
+|Nom|Valeur|
+|----|-----|
+|table_idl'id Airtable de la table contenant les données (commence par tbl)||
+|record_id|+ / Insert value from field / ID de l'entrée Airtable|
+|status|publish|
+|custom_post_type_name|le nom de votre custoom post type dans Wordpress|
+|webhook_url|coller le lien de l'étape 2.1|
 
 Dans l'encadré "Code", supprimer le contenu par défaut et copier le code suivant :
 
@@ -287,16 +279,14 @@ Activer l'automatisation.
 
 Répétez l'étape précédente, avec les trois variations suivantes :
 
-Nommez votre automatisation "{{Nom de la table}} - passer en brouillon (dépublier)".
-
-Dans le déclencheur, utilisez la condition suivante :
-Quand "Statut de synchonisation" contient " à passer en brouillon"
-
-Dans le script, la valeur l'input variable "status" sera "draft" au lieu de "publish".
+- Nommez votre automatisation "{{Nom de la table}} - passer en brouillon (dépublier)".
+- Dans le déclencheur, utilisez la condition suivante : Quand "Statut de synchonisation" contient " à passer en brouillon"
+- Dans le script, la valeur l'input variable "status" sera "draft" au lieu de "publish".
 
 #### 2.9 Rangement
 
-Dans le menu de création d'automatisation,
-Créez une section
-Nommez votre section "La Passerelle"
-Rangez vos trois automatisations dans cette section
+Dans le menu de création d'automatisation, créez une section.
+
+Nommez votre section "La Passerelle".
+
+Rangez vos trois automatisations dans cette section.
