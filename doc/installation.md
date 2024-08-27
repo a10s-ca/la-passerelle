@@ -221,13 +221,11 @@ Créer une automatisation
 
 Nommez votre automatisation "{{Nom de la table}} - publier et/ou mettre à jour".
 
-Ajouter un déclencheur / Lorsqu'une entrée correspond aux condition
+Ajoutez un déclencheur / Lorsqu'une entrée correspond aux condition
+- Tableau : Sélectionnez le tableau qui contient vos données à envoyer sur Wordpress
+- Conditions : Quand "Statut de synchronisation" contient "à synchroniser"
 
-Tableau : Sélectionner le tableau qui contient vos données à envoyer sur Wordpress
-
-Conditions : Quand "Statut de synchronisation" contient "à synchroniser"
-
-"Ajouter une action ou une logique avancée" / Choisir "Excécuter le script"
+"Ajoutez une action ou une logique avancée" / Choississez "Excécuter le script"
 
 Add input variable
 
@@ -239,7 +237,7 @@ Add input variable
 |custom_post_type_name|le nom de votre custoom post type dans Wordpress|
 |webhook_url|coller le lien de l'étape 2.1|
 
-Dans l'encadré "Code", supprimer le contenu par défaut et copier le code suivant :
+Dans l'encadré "Code", supprimez le contenu par défaut et copiez le code suivant :
 
 ````
 const inputConfig = input.config();
@@ -271,9 +269,9 @@ let response = await fetch(inputConfig.webhook_url, {
 console.log(await response.text());
 ````
 
-Cliquer sur "Terminer la modification".
+Cliquez sur "Terminer la modification".
 
-Activer l'automatisation.
+Activez l'automatisation.
 
 #### 2.8 Créer une automatisation d'appel pour passer en brouillon ("dépublier")
 
