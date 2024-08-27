@@ -137,12 +137,30 @@ let defaultParams = {
             lastSyncFieldName: 'fldG0r0AY1bZ4PdOe', // Date de synchronisation
         },
         wordpress: {
-            postType: 'membre',
+            postType: 'cpt_members',
             featured_media: 'fldjxnQtsSB4ZvHH3', // Image répertoire
             content: 'fldPIMUrW1c4JmDqV', // Description répertoire
             status: 'publish',
             acf: {
-                    'styles': 'fldBRkOYenTJaaqoG', // Styles musicaux CQM
+
+                    // Champs ACF
+
+                    'youtube_link': 'fldA1UyqxxgSpFbHn', // Youtube
+                    'website_link': 'fldQPcLFqKcvLSIZh', // Site internet
+
+
+                    // Taxonomies
+
+                    'cpt_members_region': {
+                        'field': 'fldT2BqKPdkhdaKlJ', // Région administrative
+                        'model': 'cpt_members_region'
+                    },
+
+                    'cpt_members_style': {
+                        'field': 'fldBRkOYenTJaaqoG', // Styles musicaux CQM
+                        'model': 'cpt_members_style'
+                    },
+
             },
         }
     },
