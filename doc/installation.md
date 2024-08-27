@@ -252,7 +252,6 @@ Add input variable
 |table_idl'id Airtable de la table contenant les données (commence par tbl)||
 |record_id|+ / Insert value from field / ID de l'entrée Airtable|
 |status|publish|
-|custom_post_type_name|le nom de votre custoom post type dans Wordpress|
 |webhook_url|coller le lien de l'étape 2.1|
 
 Dans l'encadré "Code", supprimez le contenu par défaut et copiez le code suivant :
@@ -273,7 +272,6 @@ config.params = JSON.stringify({
     },
     wordpress: {
         status: inputConfig.status,
-        postType: inputConfig.custom_post_type_name
     }
 });
 
