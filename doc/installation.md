@@ -68,11 +68,11 @@ IF({Afficher sur le site web},
 
 #### 2.1. Créer une automatisation déclenchée par un lien HTTP («webhook»)
 
-Dans «Automations», choisissez «Create automation», et nommez l'automatisation (par exemple, «Script WordPress»). Cliquez sur «Add trigger», puis sélectionnez le déclencheur «When webhook received». L'automatisation devrait ressembler à ceci:
+Dans «Automatisations», choisissez «Céer une automatisation», et nommez l'automatisation (par exemple, «La Passerelle - Script principal»). Cliquez sur «Ajouter un déclencheur», puis sélectionnez le déclencheur «Lorsqu'un point d'ancrage wev est reçu». L'automatisation devrait ressembler à ceci:
 
 ![Saisie d'écran de l'outil Automation de Airtable](../images/airtable2.1.png)
 
-Copiez le lien disponible sous «Send an example webhook to» et conservez le dans un endroit sécurisé.
+Copiez le lien disponible sous «Envoyez un exemple de point d'ancrage web vers» et conservez le dans un endroit sécurisé.
 
 
 #### 2.2. Installer le script de paramétrage
@@ -156,7 +156,7 @@ La valeur de sortie de ce premier bloc de script sera configurée dans une étap
 
 #### 2.3. Installer le script de synchronisation
 
-Dans l'automatisation, sous «Run actions», cliquez sur «+ Add action», puis sélectionnez l'option «Run script».
+Dans l'automatisation, cliquez sur «Ajouter une action ou une logique avancée», puis sélectionnez l'option «Exécuter le script».
 
 La fenêtre d'édition de script vous sera présentée. Supprimez le contenu de la section «Code» et copiez y le contenu du [script principal](../scripts/main.js).
 
@@ -213,14 +213,13 @@ Dans la fenêtre d'édition du code, repérez la variable d'entrée `params` cr�
 
 Fermez la fenêtre d'édition du script en cliquant sur «Terminer la modification».
 
+Activez l'automatisation.
 
-#### 2.7. Activer l'automatisation
-
-Pour activer l'automatisation, il suffit de cliquer sur le bouton rouge indiquant «Désactivée» pour qu'il devienne vert et indique «Activée».
-
-#### 2.8 Créer une automatisation d'appel pour la publication et la mise à jour
+#### 2.7 Créer une automatisation d'appel pour la publication et la mise à jour
 
 Créer une automatisation
+
+Nommez votre automatisation "{{Nom de la table}} - publier et/ou mettre à jour".
 
 Ajouter un déclencheur / Lorsqu'une entrée correspond aux condition
 Tableau : Sélectionner le tableau qui contient vos données à envoyer sur Wordpress
@@ -284,11 +283,20 @@ Cliquer sur "Terminer la modification".
 
 Activer l'automatisation.
 
-#### 2.9 Créer une automatisation d'appel pour passer en brouillon ("dépublier")
+#### 2.8 Créer une automatisation d'appel pour passer en brouillon ("dépublier")
 
-Répétez l'étape précédente, avec les deux variations suivantes :
+Répétez l'étape précédente, avec les trois variations suivantes :
+
+Nommez votre automatisation "{{Nom de la table}} - passer en brouillon (dépublier)".
 
 Dans le déclencheur, utilisez la condition suivante :
 Quand "Statut de synchonisation" contient " à passer en brouillon"
 
 Dans le script, la valeur l'input variable "status" sera "draft" au lieu de "publish".
+
+#### 2.9 Rangement
+
+Dans le menu de création d'automatisation,
+Créez une section
+Nommez votre section "La Passerelle"
+Rangez vos trois automatisations dans cette section
