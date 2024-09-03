@@ -115,7 +115,7 @@ Les types de champs supportés par le script, pour les correspondances vers des 
 |Date|Date Picker||
 |Date inluant l'heure|Date Time Picker||
 |Pièce jointe (avec une ou plusieurs pièces jointes)|Image ou File|Fonctionnement seulement pour les champs contenant une seule pièce jointe, dans un format d'image connu (jpg, jpeg, png, gif, svg, ico, webp) ou dans un autre format accepté par WordPress|
-|multipleSelects|Option 1: Text|Le comportement sera identique à l'option 1 d'un champs _singleSelect_. Aucune configuration supplémentaire n'est nécessaire|
+|Sélection multiple|Option 1: Text|Le comportement sera identique à l'option 1 d'un champs _singleSelect_. Aucune configuration supplémentaire n'est nécessaire|
 ||Option 2: Taxonomy|Cette option permet d'interagir avec les taxonomies de WordPress. Le champ ACF doit être configuré pour permettre la création de termes. Les valeurs incluses dans le champs Airtable deviendront des termes dans la taxonomie ciblée. Voir les notes sur les taxonomies pour plus de détails sur le fonctionnement.|
 |Lien une autre entrée (vers une ou plusieurs entrées) (relation)|Relation|Le champs Airtable doit contenir les identifiants WordPress des contenus correspond aux relations. Voir les notes sur les relations pour plus de détails sur le fonctionnement.|
 |Recherche avec plusieurs résultats (multiple lookup values)|Selon le type de champ référencé par le «lookup»|Supporte les «lookup» dont le résultat est envoyé vers un champs régulier (texte, date...), une taxonomie ou un champ média (dans ce cas, le «lookup» doit impérativement contenir une valeur, les champs vides ne sont pas supportés, et contenir un seul média).|
