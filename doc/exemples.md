@@ -69,6 +69,6 @@ Champs à ajouter :
 Champs à modifier :
 - Statut de synchronisation (à modifier selon les règles d'affaires)
 
-#### Pour tester l'API Wordpress
+## Pour tester l'API Wordpress
 
 {{URL de votre site web}}/wp-json/wp/v2/
