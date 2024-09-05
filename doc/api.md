@@ -158,7 +158,7 @@ config.params = JSON.stringify({
        acf: {
             'nom': 'Nom',
             'prenom': 'Prénom',
-            'type_de_membre': { // ⬅
+            'type_de_membre': { // ⬅ le nom du champ ACF
               'field': 'Type de membre', // le champ Airtable de type multipleSelects
               'model': 'type_de_membre' // le nom de la taxonomie
             }
