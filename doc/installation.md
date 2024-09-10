@@ -44,7 +44,7 @@ Dans chaque table que vous souhaitez synchroniser via La Passerelle, créez les 
 - Date de synchronisation (type : Date, format : ISO, inclure l'heure)
 - Date de modification (type : Date/heure de dernière modification, Champs : Champs spécifiques, cocher tous les champs qui doivent déclencher une mise à jour sur le site web, format : ISO, inclure l'heure, )
 - Meta (type : Texte long)
-- ID Wordpress (type : Texte sur une seule ligne)
+- ID Wordpress (type : Texte sur une seule ligne) (facultatif)
 - Statut de synchronisation (type : Formule)
 
 Voici la formule à copier dans le champ Statut de synchronisation :
@@ -88,7 +88,8 @@ let defaultParams = {
     '{{ID de la table}}': { // {{Nom de la table}}
         airtable: {
             table: 'ID de la table', // {{Nom de la table}}
-            wpIdField: '{{ID du champ contenant l'identifiant wordpress}}', // {{Nom du champ contenant l'identifiant wordpress}}
+            wpIdField: '{{ID du champ contenant l'identifiant wordpress}}', // {{Nom du champ contenant l'identifiant wordpress}} (facultatif)
+            wpUrlField: '' // facultatif
             ...
         },
         wordpress: {
