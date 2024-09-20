@@ -32,25 +32,30 @@ function b2a(a) {
 }
 
 // wrapper for WordPress post API
-async function postToWordPress(postType, wordpressPostId, title, content, featuredMedia, acf) {
-    let request = {
-        method: 'POST',
-        body: JSON.stringify({
+async function postToWordPress(postType, wordpressPostId, title, content, featuredMedia, otherBodyParams) {
+    var bodyBase = {
             "title": title,
             "content": content,
             "featured_media": featuredMedia,
-            "acf": acf,
+            //"acf": acf,
             status: wordPressStatus
-        }),
+        };
+    let request = {
+        method: 'POST',
+        body: JSON.stringify({...bodyBase, ...otherBodyParams}),
         headers: {
             'Authorization': "Basic " + b2a(WORDPRESSUSERNAME + ":" + APPLICATIONPASSWORD),
             'Content-Type': 'application/json'
         }
     };
 
-    let createdPost = await fetch(APIBASE + postType + "/" + wordpressPostId, request);
-    let response = await createdPost.json();
+    console.log("REQUËTE");
+    console.log(request);
 
+    let createdPost = await fetch(APIBASE + postType + "/" + wordpressPostId, request);
+    console.log(createdPost);
+    let response = await createdPost.json();
+    console.log(response);
     return response;
 }
 
@@ -228,6 +233,10 @@ async function findOrCreateModelTermId(modelName, term, meta) {
 // managed with the same paths and verbs in the REST API. This function can thus
 // be used to manage relations in general, and has been tested with taxonomies.
 async function findOrCreateRelatedModels(field, record, wordpressDetails, meta) {
+    console.log("RELATED MODELS");
+    console.log(field);
+    console.log(wordpressDetails);
+    console.log(meta);
     let modelName = wordpressDetails.model;
     let res = [];
     switch(field.type) {
@@ -256,6 +265,59 @@ async function findOrCreateRelatedModels(field, record, wordpressDetails, meta) 
     return res;
 }
 
+// Finds the configs for fiedlName in the script params, and writes the
+// corresponding values in targetObj, which is structured to be used in the
+// body of a WP REST API call
+async function buildBodyParams(fieldConfig, targetObj, targetFieldName, record, meta) {
+    // determine what the configs for that field are
+    var airtableFieldName;
+    let wordpressDetails = {};
+    if (typeof(fieldConfig) == 'string') {
+        airtableFieldName = fieldConfig;
+    } else {
+        airtableFieldName = fieldConfig.field;
+        wordpressDetails.model = fieldConfig.model;
+    }
+
+    // get the Airtable field and process it
+    let field = table.getField(airtableFieldName);
+    let value = record.getCellValueAsString(airtableFieldName);
+    switch(field.type) {
+        case 'multipleAttachments':
+            let newMeta = await findOrCreateWordpressAttachment(table, record, airtableFieldName, meta);
+            if (newMeta) {
+                meta = newMeta;
+                targetObj[targetFieldName] = meta.attachments[airtableFieldName] && meta.attachments[airtableFieldName].wordPressMediaId;
+            }
+            // TODO: else?
+            // TODO we could make this cleaner by passing the value-as-reference meta var to findOrCreateWordpressAttachment and deal with updating meta within that function
+            break;
+        case 'multipleSelects':
+        case 'singleSelect':
+        case 'multipleLookupValues':
+        case 'formula':
+            if (value && value.length > 0) {
+                if (wordpressDetails.model) {
+                    let relatedModels = await findOrCreateRelatedModels(field, record, wordpressDetails, meta);
+                    if (relatedModels && relatedModels.length > 0) targetObj[targetFieldName] = relatedModels;
+                } else {
+                    targetObj[targetFieldName] = value;
+                }
+            } else {
+                targetObj[targetFieldName] = null;
+            }
+            break;
+        default: // 'singleLineText', 'multilineText', 'email', 'url', 'singleSelect', 'phoneNumber', 'rollup', 'date, 'dateTime'
+            if (value && value.length > 0) {
+                targetObj[targetFieldName] = value;
+            } else {
+                targetObj[targetFieldName] = null;
+            }
+            break;
+    };
+}
+
+
 // determing which records should be synced
 // TODO validate other parameters before starting?
 let table = base.getTable(params.airtable.table);
@@ -276,6 +338,7 @@ if (params.syncType == 'record') {
 } else {
     console.log("Type de synchronisation inconnue (rien ne sera synchronisé.");
 };
+
 
 async function main()  {
     // do the actual sync on all relevant records
@@ -304,60 +367,22 @@ async function main()  {
             }
         };
 
+        // prepare other body params for the WP REST API call (anything that is not title, content, media or ACF)
+        let baseParams = ['postType', 'titleField', 'content', 'featured_media', 'status', 'acf'];
+        let otherBodyParams = {};
+        for (const fieldName of Object.keys(params.wordpress).filter(value => !baseParams.includes(value))) {
+            await buildBodyParams(params.wordpress[fieldName], otherBodyParams, fieldName, record, meta);
+        };
+
         // prepare ACF content
         let acf = {};
         for (const acfFieldName of Object.keys(params.wordpress.acf || {})) {
-            // determine what the configs for that acf are
-            var airtableFieldName;
-            let wordpressDetails = {};
-            if (typeof(params.wordpress.acf[acfFieldName]) == 'string') {
-                airtableFieldName = params.wordpress.acf[acfFieldName];
-            } else {
-                airtableFieldName = params.wordpress.acf[acfFieldName].field;
-                wordpressDetails.model = params.wordpress.acf[acfFieldName].model;
-            }
-
-            // get the Airtable field and process it
-            let field = table.getField(airtableFieldName);
-            let value = record.getCellValueAsString(airtableFieldName);
-            switch(field.type) {
-                case 'multipleAttachments':
-                    let newMeta = await findOrCreateWordpressAttachment(table, record, airtableFieldName, meta);
-                    if (newMeta) {
-                        meta = newMeta;
-                        acf[acfFieldName] = meta.attachments[airtableFieldName] && meta.attachments[airtableFieldName].wordPressMediaId;
-                    }
-                    // TODO: else?
-                    // TODO we could make this cleaner by passing the value-as-reference meta var to findOrCreateWordpressAttachment and deal with updating meta within that function
-                    break;
-                case 'multipleSelects':
-                case 'singleSelect':
-                case 'multipleLookupValues':
-                case 'formula':
-                    if (value && value.length > 0) {
-                        if (wordpressDetails.model) {
-                            let relatedModels = await findOrCreateRelatedModels(field, record, wordpressDetails, meta);
-                            if (relatedModels && relatedModels.length > 0) acf[acfFieldName] = relatedModels;
-                        } else {
-                            acf[acfFieldName] = value;
-                        }
-                    } else {
-                        acf[acfFieldName] = null;
-                    }
-                    break;
-                default: // 'singleLineText', 'multilineText', 'email', 'url', 'singleSelect', 'phoneNumber', 'rollup', 'date, 'dateTime'
-                    if (value && value.length > 0) {
-                        acf[acfFieldName] = value;
-                    } else {
-                        acf[acfFieldName] = null;
-                    }
-
-                    break;
-            };
+            await buildBodyParams(params.wordpress.acf[acfFieldName], acf, acfFieldName, record, meta);
         };
+        otherBodyParams.acf = acf;
 
         // perform the actual update to WordPress
-        let response = await postToWordPress(params.wordpress.postType, wordpressPostId, title, content, featuredMedia, acf)
+        let response = await postToWordPress(params.wordpress.postType, wordpressPostId, title, content, featuredMedia, otherBodyParams)
         console.log(response);
 
         // update meta information in the record, as well as optional fields for details
