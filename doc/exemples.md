@@ -92,6 +92,52 @@ let response = await fetch(webhookUrl, {
 console.log(await response.text());
 ````
 
+Mettre à jour l'automatisation principale
+
+Ajouter une action / Exécuter un script 
+
+|Nom|Valeur|
+|params|body/params|
+
+````javascript
+let config = input.config();
+
+let hookParams = {};
+
+if (config.params) hookParams = JSON.parse(config.params);
+
+console.log(hookParams);
+
+let table_id = hookParams.airtable.table;
+let record_id = hookParams.airtable.recordId;
+
+console.log (table_id);
+console.log(record_id);
+
+let table = base.getTable(table_id);
+
+console.log(table);
+
+switch(table_id){
+
+  case "tbl9BppCmLn7DT6zV" : // Organisations
+  
+    await table.updateRecordAsync(record_id, {
+      "fldscMZ8t2Oa4oMCM" : {name: "✅ synchronisation terminée"}
+    });
+
+    break;
+
+  case "tbl2psd9D3dNuGWmH" : // Oeuvres
+  
+    await table.updateRecordAsync(record_id, {
+      "fldEk2p9NntZt9ClK" : {name: "✅ synchronisation terminée"}
+    });
+
+    break;
+
+}
+````
 
 ## [Avancé] Pour utiliser les extensions
 
