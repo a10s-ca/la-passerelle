@@ -135,3 +135,7 @@ Pour éviter la confusion :
 ## Pour tester l'API Wordpress
 
 {{URL de votre site web}}/wp-json/wp/v2/
+
+## Outil pour créer des taxonomies
+
+[https://generatewp.com/taxonomy/]
