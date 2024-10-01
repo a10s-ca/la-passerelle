@@ -247,8 +247,8 @@ Un champ de relation dans Airtable peut être synchronisé avec un champ de rela
 
 Les étapes à suivre sont les suivantes:
 
-* ajouter un champ de type _Recherche (lookup)_ dans Airtable pour obtenir les identifiants WordPress des enregistrements liés (l'utilisation des options de métadonnées permettant de stocker cet identifiant dans un champ dédié sera essentielle)
-* faire la configuration de synchronisation sur le champ _lookup_
+* ajouter un champ de type Recherche (_lookup_) dans Airtable pour obtenir les identifiants WordPress des entrées liés (l'utilisation des options de métadonnées permettant de stocker cet identifiant dans un champ dédié sera essentielle)
+* faire la configuration de synchronisation sur le champ Recherche
 * utiliser les options de configurations détaillées pour spécifier le type de contenu lié dans WordPress
 
 L'appel au script prendra la forme suivante:
