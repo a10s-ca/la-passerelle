@@ -60,14 +60,70 @@ Pour éviter la confusion :
 * un clic sur le bouton dans la table du Menu exécute l'opération configurée dans l'enregistrement concerné du menu ;
 * un clic sur le bouton dans une autre table synchronise un seul champ.
 
-## Pour une publication automatique selon les règles d'affaires
+## Pour forcer la synchronisation
+
+Lorsque la syncrhonisation se fait de façon automatique, par exemple dans le cas d'un répertoire des membres où une adhésion valide entraine automatiquement la publication sur le site Wordpress, il peut être utile de pouvoir forcer la synchronisation, pour faire des test ou du débuggage.
 
 Champs à ajouter :
 - Statut wordpress (type : Formule)
+````
+IF({Meta}, REGEX_EXTRACT({Meta},'"status":"([a-z]+)"'))
+````
+  
 - Forcer la synchronisation (type : Sélection unique)
+  - ▶️ forcer la synchronisation
+  - ⏳ synchronisation lancée
+  - ✅ synchronisation terminée
   
 Champs à modifier :
 - Statut de synchronisation (à modifier selon les règles d'affaires)
+
+Automatisations à ajouter (une par table)
+
+Déclencheur : lorsqu'une entrée correspond aux conditions
+Quand "Forcer la synchronisation La Passerelle" est "▶️ forcer la synchronisation"
+
+Actions :
+Exécuter un script
+Mettre à jour l'entrée, Champs "Forcer la synchronisation La Passerelle"
+
+|Nom|Valeur|
+|----|-----|
+|webhookURL|coller le lien de l'étape 2.1 de l'installation|
+|recordId|ID de l'entrée Airtable|
+|wordpressStatus|champ créé plus tôt|
+|tableID|l'id Airtable de la table contenant les données (commence par tbl)|
+
+````
+const inputConfig = input.config();
+const webhookUrl = inputConfig.webhookURL;
+const wordpressStatus = inputConfig.wordpressStatus;
+
+var config = {};
+
+// we stringify the params key, which will be double-stringified in the request body, so that we can
+// pass it serialized to the automation script, which will deserialize it. This is because Airtable will not
+// allow us to use specific keys in automation script config.
+config.params = JSON.stringify({
+    syncType: 'record',
+    airtable: {
+        table: tableID,
+        recordId: inputConfig.recordId
+    },
+    wordpress: {
+        status: wordpressStatus
+    }
+});
+
+let response = await fetch(webhookUrl, {
+    method: 'POST',
+    body: JSON.stringify(config),
+    headers: {
+        'Content-Type': 'application/json'
+    }
+});
+console.log(await response.text());
+````
 
 ## Pour tester l'API Wordpress
 
