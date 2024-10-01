@@ -60,7 +60,7 @@ Note au sujet du titre: la valeur dans `params.wordpress.title` est une chaîne 
 
 ## Métadonnées
 
-La Passerelle doit stocker certaines métadonnées relatives aux informations disponibles dans WordPress et dans Airtable. L'ensemble de ces métadonnées sont sérialisées au format JSON et stockées dans un champs de type «Long text» dans chacun des enregistrements des tables Airtable qui font l'objet d'une synchronisation.
+La Passerelle doit stocker certaines métadonnées relatives aux informations disponibles dans WordPress et dans Airtable. L'ensemble de ces métadonnées sont sérialisées au format JSON et stockées dans un champs de type "Texte long" dans chacune des entrées Airtable qui font l'objet d'une synchronisation.
 
 Par défaut, le script cherche les données dans un champ nommé «meta». Il est toutefois possible d'utiliser un autre champ en le spécifiant dans les paramètres d'appel du script, à la clé `airtable.metaFieldName`. Le champ de métadonnées contiendra plusieurs informations relatives au contenu correspondant à un enregistrement dans WordPress. Ces informations sont sérialisées au format JSON.
 
