@@ -250,7 +250,7 @@ Add input variable
 
 |Nom|Valeur|
 |----|-----|
-|table_idl'id Airtable de la table contenant les données (commence par tbl)||
+|table_id|l'id Airtable de la table contenant les données (commence par tbl)||
 |record_id|+ / Insert value from field / ID de l'entrée Airtable|
 |status|publish|
 |webhook_url|coller le lien de l'étape 2.1|
