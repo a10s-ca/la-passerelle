@@ -47,8 +47,8 @@ Pour tous les types de contenus (articles, pages ou types de contenus personnali
 * `params.wordpress.title`: le titre du contenu (voir la note plus bas au sujet du titre)
 * `params.wordpress.content`: le nom d'un champ quelconque dont le contenu, converti en texte, sera utilisé comme contenu principal du «post» dans WordPress
 * `params.wordpress.featured_media`: le choix du média principal du «post», sous la forme de soit:
- * l'identifiant numérique du média WordPress, dans un champ texte ou nombre
- * une image, dans un champs de pièce jointe Airtable
+     * l'identifiant numérique du média WordPress, dans un champ texte ou nombre
+     * une image, dans un champs de pièce jointe Airtable
 
 Dans le cas des types de contenus personnalisés («custom post types») qui utilisent des champs avancés («custom fields»), la clé `params.wordpress.acf` permet de spécifier les correspondances. Les correspondance peuvent prendre deux formes:
 
