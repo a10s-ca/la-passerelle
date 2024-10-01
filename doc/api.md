@@ -153,7 +153,7 @@ Il est possible d'utiliser un champ Airtable pour gérer une taxonomie dans Word
 
 Il est possible de le faire pour les taxonomies "régulières" et pour les taxonomies ACF. L'implémentation sera légèrement différente, selon le cas.
 
-Pour ce faire, la configuration du champs ACF doit être modifiée. Plutôt que de simplement indiquer la correspondance avec le champs ACF, il faut mentionner la taxonomie concernée. Le format doit être le suivant:
+Plutôt que de simplement indiquer la correspondance avec le champ, il faut mentionner la taxonomie concernée. Le format doit être le suivant:
 
 Exemple avec une taxonomie "régulière"
 ````javascript
