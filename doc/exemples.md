@@ -60,6 +60,36 @@ Pour éviter la confusion :
 * un clic sur le bouton dans la table du Menu exécute l'opération configurée dans l'enregistrement concerné du menu ;
 * un clic sur le bouton dans une autre table synchronise un seul champ.
 
+
+
+## Pour publier automatiquement
+
+Dnas certains cas, il peut être utile que de nouveaux posts soient publiés automatiquement sur le site Wordpress, sans approbation humaine, par exemple pour un répertoire des membres.
+
+Voici un exemple pour lequel dès qu'une adhésion sera active, le profil du membre sera publié automatiquement sur le site wordpress. Puis, 30 jours après la fin de la date d'adhésion, le profil du membre sera retiré automatiquement du site Wordpress.
+
+Le champ "Date d'échéance de la dernière adhésion" est un champ de type cumul provenant de la table Adhésions.
+
+Nouvelle formule pour le champ "Statut de synchronisation modifié" (seule la première ligne a été modifiée) :
+
+````
+IF(IF(IS_AFTER(DATEADD({Date d'échéance de la dernière adhésion},30,'day'),TODAY()),"afficher"),
+
+  IF(NOT({Meta}), "à synchroniser",
+
+  IF(SEARCH('"status":"draft"', {Meta}),"à synchroniser",
+
+    IF(SEARCH('"status":"publish"', {Meta}), 
+
+      IF(IS_AFTER({Date de synchronisation}, {Date de modification}),
+          "à jour (publié)", "à synchroniser")))),
+
+  IF(SEARCH('"status":"publish"', {Meta}), "à passer en brouillon",
+  IF(SEARCH('"status":"draft"', {Meta}), "brouillon")))
+````
+
+
+
 ## Pour forcer la synchronisation
 
 Lorsque la syncrhonisation se fait de façon automatique, par exemple dans le cas d'un répertoire des membres où une adhésion valide entraine automatiquement la publication sur le site Wordpress, il peut être utile de pouvoir forcer la synchronisation, pour faire des test ou du débuggage.
@@ -74,9 +104,6 @@ IF({Meta}, REGEX_EXTRACT({Meta},'"status":"([a-z]+)"'))
   - ▶️ forcer la synchronisation
   - ⏳ synchronisation lancée
   - ✅ synchronisation terminée
-  
-Champs à modifier :
-- Statut de synchronisation (à modifier selon les règles d'affaires)
 
 Automatisations à ajouter (une par table)
 
