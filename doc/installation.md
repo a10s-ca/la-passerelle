@@ -30,6 +30,59 @@ Par ailleurs, afin de permettre un accès sécuritaire aux données, il est néc
 Enfin, il faut créer un usager et son mot de passe pour le script Airtable. Les étapes à suivre sont décrites à la section «Getting Credentials / Generating Manually» du [guide d'intégration de Application Passwords](https://make.wordpress.org/core/2020/11/05/application-passwords-integration-guide/). À la fin du processus, notez dans un endroit sécurisé le nom d'usager associé au compte, et le mot de passe d'application (il est important de le noter dès qu'il vous est affiché, car il ne sera pas possible de le récupérer par la suite).
 
 
+#### 1.3. Show in rest
+
+Si des taxonomies sont utilisées, elles doivent être mise à la disposition de l'API en utilisant le paramètre "show_in_rest".
+
+Exemple de code pour une taxonomie
+````
+// Register Custom Taxonomy
+function cpt_members_type() {
+
+    $labels = array(
+        'name'                       => _x( 'Types', 'Taxonomy General Name', 'theme-client' ),
+        'singular_name'              => _x( 'Type', 'Taxonomy Singular Name', 'theme-client' ),
+        'menu_name'                  => __( 'Types', 'theme-client' ),
+        'all_items'                  => __( 'All Types', 'theme-client' ),
+        'parent_item'                => __( 'Parent Type', 'theme-client' ),
+        'parent_item_colon'          => __( 'Parent Type:', 'theme-client' ),
+        'new_item_name'              => __( 'New Type Name', 'theme-client' ),
+        'add_new_item'               => __( 'Add New Type', 'theme-client' ),
+        'edit_item'                  => __( 'Edit Type', 'theme-client' ),
+        'update_item'                => __( 'Update Type', 'theme-client' ),
+        'view_item'                  => __( 'View Type', 'theme-client' ),
+        'separate_items_with_commas' => __( 'Separate types with commas', 'theme-client' ),
+        'add_or_remove_items'        => __( 'Add or remove types', 'theme-client' ),
+        'choose_from_most_used'      => __( 'Choose from the most used', 'theme-client' ),
+        'popular_items'              => __( 'Popular Items', 'theme-client' ),
+        'search_items'               => __( 'Search Items', 'theme-client' ),
+        'not_found'                  => __( 'Not Found', 'theme-client' ),
+        'no_terms'                   => __( 'No items', 'theme-client' ),
+        'items_list'                 => __( 'Items list', 'theme-client' ),
+        'items_list_navigation'      => __( 'Items list navigation', 'theme-client' ),
+    );
+    $rewrite = array(
+        'slug'                       => 'type',
+        'with_front'                 => true,
+        'hierarchical'               => false,
+    );
+    $args = array(
+        'labels'                     => $labels,
+        'hierarchical'               => true,
+        'public'                     => true,
+        'show_ui'                    => true,
+        'show_admin_column'          => true,
+        'show_in_nav_menus'          => true,
+        'show_tagcloud'              => true,
+        'rewrite'                    => $rewrite,
+        'show_in_rest'               => true,
+    );
+    register_taxonomy( 'cpt_members_type', array( 'cpt_members' ), $args );
+
+}
+add_action( 'init', 'cpt_members_type', 0 );
+````
+
 ### 2. Préparer la base Airtable
 
 Pour réaliser les synchronisations, il est nécessaire d'installer le script de synchronisation principal dans la base Airtable qui contient les données maîtres.
