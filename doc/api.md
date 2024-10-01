@@ -73,15 +73,15 @@ Il est par ailleurs possible de faire en sorte que le script note certaines de c
 |wpUrlField|URL|Lien public du contenu dans WordPress|
 |lastSyncFieldName|Date et heure|Date et heure de la dernière synchronisation|
 
-Par exemple, les paramètres suivants indiquent au script que le champ pour stocker les métadonnées se nomme «_meta» (plutôt que «meta») et que le lien public du contenu WordPress doit être stocké dans le champs «Lien»
+Par exemple, les paramètres suivants indiquent au script que le champ pour stocker les métadonnées se nomme «Meta» (plutôt que «meta») et que le lien public du contenu WordPress doit être stocké dans le champs «Lien Wordpress»
 
 ```javascript
 config.params = JSON.stringify({
     syncType: 'record',
     airtable: {
         table: 'Artistes',
-        metaFieldName: '_meta',   // ⬅
-        wpUrlField: 'Lien',       // ⬅
+        metaFieldName: 'Meta',   // ⬅
+        wpUrlField: 'Lien Wordpress',       // ⬅
         ...
     },
     wordpress: {
