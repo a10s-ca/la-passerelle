@@ -59,7 +59,7 @@ Mettre à jour l'entrée, Champs "Forcer la synchronisation La Passerelle"
 |webhookURL|coller le lien de l'étape 2.1 de l'installation|
 |recordId|ID de l'entrée Airtable|
 |wordpressStatus|champ créé plus tôt|
-|tableID|l'id Airtable de la table contenant les données (commence par tbl)|
+|tableId|l'id Airtable de la table contenant les données (commence par tbl)|
 
 ````
 const inputConfig = input.config();
@@ -74,7 +74,7 @@ var config = {};
 config.params = JSON.stringify({
     syncType: 'record',
     airtable: {
-        table: tableID,
+        table: inputConfig.tableId,
         recordId: inputConfig.recordId
     },
     wordpress: {
