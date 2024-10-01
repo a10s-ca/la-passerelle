@@ -153,7 +153,7 @@ Il est possible d'utiliser un champ Airtable pour gérer une taxonomie dans Word
 
 Il est possible de le faire pour les taxonomies "régulières" et pour les taxonomies ACF. L'implémentation sera légèrement différente, selon le cas.
 
-Plutôt que de simplement indiquer la correspondance avec le champ, il faut mentionner la taxonomie concernée.
+Si une valeur du champ Airtable n'existe pas dans la taxonomie, elle sera créée dans WordPress. Les valeurs non utilisées ne sont toutefois pas supprimées de WordPress.
 
 Exemple avec une taxonomie "régulière"
 ````javascript
@@ -240,8 +240,6 @@ let baseParams = {
 
 output.set('defaultParams', JSON.stringify(baseParams));
 ```
-
-Si une valeur du champ Airtable n'existe pas dans la taxonomie, elle sera créée dans WordPress. Les valeurs non utilisées ne sont toutefois pas supprimées de WordPress.
 
 ## Relations
 
