@@ -2,50 +2,9 @@
 
 Des exemples pour des cas d'utilisation communs suivent. Dans tous les cas, les scripts contiennent des références à des tables et des champs fictifs: vous devez les modifier pour tenir compte de votre base de données.
 
-## Synchroniser des données depuis une automatisation Airtable vs depuis une extension
-
-L'environnement d'exécution des automatisations dans Airtable est légèrement différent de celui des extensions. Notamment:
-
-* les API `input` et `output` sont uniquement disponibles dans les extensions;
-* l'appel au webhook du script principal doit être réalisé avec `fetch` dans les automatisation, alors qu'il doit être appelé avec `remoteFetchAsync` dans les extensions.
-
-
-## [Avancé] Un seul script pour plusieurs types d'opérations, et pour maintenir une seule table de correspondances
-
-Dans le cas où plusieurs tables doivent être synchronisées, avec des variantes pour un seul enregistrement à la fois, ou une vue entière, ou la table entière, il peut devenir compliqué de gérer les nombreuses extensions. Cette complexité affecte à la fois les développeurs qui configurent les extensions, que les utilisateurs qui doivent naviguer à travers les tables et les extensions.
-
-Une approche pour résoudre ce problème consiste à utiliser un seul script contenant la table de correspondance des champs de toutes les tables, qui sait réaliser tous les types de synchronisations, et qui peut détecter le type de synchronisation en fonction du contexte de l'utilisateur.
-
-Le script [le_menu.js](../scripts/le_menu.js), combiné à une table Airtable permettant de stocker des configurations, implante cette approche. Installez le dans une extension de type script, comme pour les autres scripts. Ensuite, indiquez l'URL du webhook déclencheur du script principal dans le champ de configuration prévu à cette fin.
-
-Pour fonctionner, le script s'appuie sur des configurations qui doivent être stockées dans une table dédiée à cette fin. La table, nommée «Menu La Passerelle», contient des enregistrements qui correspondent à des types de synchronisation (telle vue de telle table; ou telle table en entier; ou un seul enregistrement pour une table donnée; etc.). Elle doit contenir les champs suivants:
-
-|Champ|Priorité|Type et contenu|Utilité|
-|---|---|---|---|
-|Identificateur|Obligatoire|Au choix|Sera affichée à l'usager pour sélectionner l'opération qu'il souhaite réaliser|
-|Notes|Optionnel|Texte long|Pour documenter l'utilisation de ce type de synchronisation|
-|Type|Obligatoire|Texte ou selection simple|Indique le type de synchronisation. Les options possible sont «Toute la table», «Une vue» et «Un enregistrement» (l'orthographe doit être respecté strictement)|
-|Table|Obligatoire|Texte ou selection simple|Indique la table visée par la synchronisation. L'orthographe doit strictement être identique au nom de la table.|
-|Vue|Obligatoire|Texte ou selection simple|Indique la vue visée par la synchronisation, si le type concerne une vue|
-|Statut|Optionnel|Texte ou selection simple|Doit contenir le statut WordPress qui sera appliqué, par exemple `publish` ou `draft`|
-|Lancer la synchronisation (nom libre)|Bouton|Obligatoire|Bouton qui déclenche l'exécution du script du menu|
-
-Voici un exemple d'une telle table:
-
-![Exemple de table pour Le Menu](../images/le_menu.png)
-
-Il est également possible d'ajouter des champ de type bouton, qui déclenche le script à partir d'autres tables. Leur utilisation permet d'avoir des boutons de synchronisation individuelle d'un seul champ pour n'importe quelle table, tout en bénéficiant de la configuration unique des tables de correspondance dans le script Le Menu. À noter que dans cette configuration, le statut sera toujours `publish`, sauf si le nom de la vue d'où le script est appelé contient le mot «brouillon».
-
-Pour éviter la confusion :
-
-* un clic sur le bouton dans la table du Menu exécute l'opération configurée dans l'enregistrement concerné du menu ;
-* un clic sur le bouton dans une autre table synchronise un seul champ.
-
-
-
 ## Pour publier automatiquement
 
-Dnas certains cas, il peut être utile que de nouveaux posts soient publiés automatiquement sur le site Wordpress, sans approbation humaine, par exemple pour un répertoire des membres.
+Dans certains cas, il peut être utile que de nouveaux posts soient publiés automatiquement sur le site Wordpress, sans approbation humaine, par exemple pour un répertoire des membres.
 
 Voici un exemple pour lequel dès qu'une adhésion sera active, le profil du membre sera publié automatiquement sur le site wordpress. Puis, 30 jours après la fin de la date d'adhésion, le profil du membre sera retiré automatiquement du site Wordpress.
 
@@ -132,6 +91,46 @@ let response = await fetch(webhookUrl, {
 });
 console.log(await response.text());
 ````
+
+
+## [Avancé] Pour utiliser les extensions
+
+Le document installation.md présente une façon d'installer La Passerelle en utilisant les automatisations. Il est également possible de le faire en utilisant les extensions à la place de certaines automatisations.
+
+L'environnement d'exécution des automatisations dans Airtable est légèrement différent de celui des extensions. Notamment:
+
+* les API `input` et `output` sont uniquement disponibles dans les extensions;
+* l'appel au webhook du script principal doit être réalisé avec `fetch` dans les automatisation, alors qu'il doit être appelé avec `remoteFetchAsync` dans les extensions.
+
+Il est possible de créer une extensions pour chaque cas de figure (publier une entrée, publier une vue, publier une table, passer en brouillon, etc). Dans le cas où plusieurs tables doivent être synchronisées, avec des variantes pour un seul enregistrement à la fois, ou une vue entière, ou la table entière, il peut devenir compliqué de gérer les nombreuses extensions. Cette complexité affecte à la fois les développeurs qui configurent les extensions, que les utilisateurs qui doivent naviguer à travers les tables et les extensions.
+
+Une approche pour résoudre ce problème consiste à utiliser un seul script contenant la table de correspondance des champs de toutes les tables, qui sait réaliser tous les types de synchronisations, et qui peut détecter le type de synchronisation en fonction du contexte de l'utilisateur.
+
+Le script [le_menu.js](../scripts/le_menu.js), combiné à une table Airtable permettant de stocker des configurations, implante cette approche. Installez le dans une extension de type script, comme pour les autres scripts. Ensuite, indiquez l'URL du webhook déclencheur du script principal dans le champ de configuration prévu à cette fin.
+
+Pour fonctionner, le script s'appuie sur des configurations qui doivent être stockées dans une table dédiée à cette fin. La table, nommée «Menu La Passerelle», contient des enregistrements qui correspondent à des types de synchronisation (telle vue de telle table; ou telle table en entier; ou un seul enregistrement pour une table donnée; etc.). Elle doit contenir les champs suivants:
+
+|Champ|Priorité|Type et contenu|Utilité|
+|---|---|---|---|
+|Identificateur|Obligatoire|Au choix|Sera affichée à l'usager pour sélectionner l'opération qu'il souhaite réaliser|
+|Notes|Optionnel|Texte long|Pour documenter l'utilisation de ce type de synchronisation|
+|Type|Obligatoire|Texte ou selection simple|Indique le type de synchronisation. Les options possible sont «Toute la table», «Une vue» et «Un enregistrement» (l'orthographe doit être respecté strictement)|
+|Table|Obligatoire|Texte ou selection simple|Indique la table visée par la synchronisation. L'orthographe doit strictement être identique au nom de la table.|
+|Vue|Obligatoire|Texte ou selection simple|Indique la vue visée par la synchronisation, si le type concerne une vue|
+|Statut|Optionnel|Texte ou selection simple|Doit contenir le statut WordPress qui sera appliqué, par exemple `publish` ou `draft`|
+|Lancer la synchronisation (nom libre)|Bouton|Obligatoire|Bouton qui déclenche l'exécution du script du menu|
+
+Voici un exemple d'une telle table:
+
+![Exemple de table pour Le Menu](../images/le_menu.png)
+
+Il est également possible d'ajouter des champ de type bouton, qui déclenche le script à partir d'autres tables. Leur utilisation permet d'avoir des boutons de synchronisation individuelle d'un seul champ pour n'importe quelle table, tout en bénéficiant de la configuration unique des tables de correspondance dans le script Le Menu. À noter que dans cette configuration, le statut sera toujours `publish`, sauf si le nom de la vue d'où le script est appelé contient le mot «brouillon».
+
+Pour éviter la confusion :
+
+* un clic sur le bouton dans la table du Menu exécute l'opération configurée dans l'enregistrement concerné du menu ;
+* un clic sur le bouton dans une autre table synchronise un seul champ.
+
 
 ## Pour tester l'API Wordpress
 
