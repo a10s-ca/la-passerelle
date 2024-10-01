@@ -115,9 +115,9 @@ Les types de champs supportés par le script, pour les correspondances vers des 
 |Date|Date Picker||
 |Date inluant l'heure|Date Time Picker||
 |Pièce jointe (avec une ou plusieurs pièces jointes)|Image ou File|Fonctionne seulement pour les champs contenant une seule pièce jointe, dans un format d'image connu (jpg, jpeg, png, gif, svg, ico, webp) ou dans un autre format accepté par WordPress|
-|Sélection multiple|Option 1: Text|Le comportement sera identique à l'option 1 d'un champs _singleSelect_. Aucune configuration supplémentaire n'est nécessaire|
+|Sélection multiple|Option 1: Text|Le comportement sera identique à l'option 1 d'un champ Sélection unique. Aucune configuration supplémentaire n'est nécessaire|
 ||Option 2: Taxonomy|Cette option permet d'interagir avec les taxonomies de WordPress. Le champ ACF doit être configuré pour permettre la création de termes. Les valeurs incluses dans le champs Airtable deviendront des termes dans la taxonomie ciblée. Voir les notes sur les taxonomies pour plus de détails sur le fonctionnement.|
-|Lien vers une autre entrée (vers une ou plusieurs entrées) (relation)|Relation|Le champs Airtable doit contenir les identifiants WordPress des contenus correspond aux relations. Voir les notes sur les relations pour plus de détails sur le fonctionnement.|
+|Lien vers une autre entrée (vers une ou plusieurs entrées) (relation)|Relation|Il faut créer un champ Airtable de type Recherche qui contient les identifiants WordPress des entrées liées. Voir les notes sur les relations pour plus de détails sur le fonctionnement.|
 |Recherche avec plusieurs résultats (multiple lookup values)|Selon le type de champ référencé par le «lookup»|Supporte les «lookup» dont le résultat est envoyé vers un champs régulier (texte, date...), une taxonomie ou un champ média (dans ce cas, le «lookup» doit impérativement contenir une valeur, les champs vides ne sont pas supportés, et contenir un seul média).|
 
 ## Types de contenus dans WordPress
@@ -126,7 +126,7 @@ Le type de contenu («post type») dans WordPress est déterminé par la clé `p
 
 ## Statut des contenus dans WordPress
 
-Par défaut, la Passerelle crée des contenus en état brouillon dans WordPress. Il est possible de choisir l'état des contenus créés avec la clé `wordpress.status` des paramètres. Les valeurs acceptées sont `publish`, `future`, `draft`, `pending` et `private`. Par exemple:
+Par défaut, La Passerelle crée des contenus en état brouillon dans WordPress. Il est possible de choisir l'état des contenus créés avec la clé `wordpress.status` des paramètres. Les valeurs acceptées sont `publish`, `future`, `draft`, `pending` et `private`. Par exemple:
 
 ```javascript
 config.params = JSON.stringify({
@@ -145,26 +145,100 @@ config.params = JSON.stringify({
 
 ## Taxonomies
 
-Il est possible de faire en sorte qu'un champ de sélection unique ou multiple (ou un «lookup» tiré d'un tel champ) dans Airtable permette de gérer une taxonomie dans WordPress. Pour ce faire, la configuration du champs ACF doit être modifiée. Plutôt que de simplement indiquer la correspondance avec le champs ACF, il faut mentionner la taxonomie concernée. Le format doit être le suivant:
+Il est possible d'utiliser un champ Airtable pour gérer une taxonomie dans Wordpress. Les types de champs Airtable supportés sont :
+* Sélection unique
+* Sélection multiple
+* Recherche (_lookup_) faisant référence à un champ Sélection unique ou Sélection multiple
+* Lien vers une autre entrée (_linked record_) (vers une ou plusieurs entrées)
 
-```javascript
-config.params = JSON.stringify({
-    syncType: 'record',
-    airtable: {
-        table: 'Artistes'
+Il est possible de le faire pour les taxonomies "régulières" et pour les taxonomies ACF. L'implémentation sera légèrement différente, selon le cas.
+
+Pour ce faire, la configuration du champs ACF doit être modifiée. Plutôt que de simplement indiquer la correspondance avec le champs ACF, il faut mentionner la taxonomie concernée. Le format doit être le suivant:
+
+Exemple avec une taxonomie "régulière"
+````javascript
+let defaultParams = {
+    'tblb00KvosFf8HmdE': { // Dossiers
+        airtable: {
+            table: 'tblb00KvosFf8HmdE', // Dossiers
+            titleField: "fldFJ5wSQC59MSJnO", // Nom du dossier  
+
+            metaFieldName: 'fldGmie09tmm6HTeV', // Meta 
+            lastSyncFieldName: 'fldG0r0AY1bZ4PdOe', // Date de synchronisation
+
+        },
+        wordpress: {
+            postType: 'cpt_members',
+            featured_media: 'fldjxnQtsSB4ZvHH3', // Image répertoire
+            content: 'fldPIMUrW1c4JmDqV', // Description répertoire
+            status: 'publish',
+
+            // Taxonomies
+            cpt_members_style: { 
+                'field': 'fldBRkOYenTJaaqoG', // Styles musicaux
+                'model': 'cpt_members_style'
+            },
+            cpt_members_region: { 
+                'field': 'fldiEuEHmkwFR0AE3', // Région administrative
+                'model': 'cpt_members_region'
+            },
+
+            acf: {
+                    // Champs ACF                
+                    'credit_photo': 'fldfyi0XgeFy6mCQC', // Crédit photo de l'image répertoire
+                    'website_link': 'fldQPcLFqKcvLSIZh', // Site internet
+
+            },
+        }
     },
-    wordpress: {
-       postType: 'artiste',
-       acf: {
-            'nom': 'Nom',
-            'prenom': 'Prénom',
-            'type_de_membre': { // ⬅ le nom du champ ACF
-              'field': 'Type de membre', // le champ Airtable de type multipleSelects
-              'model': 'type_de_membre' // le nom de la taxonomie
+}
+
+output.set('defaultParams', JSON.stringify(defaultParams));
+````
+
+
+Exemple avec une taxonomie ACF
+```javascript
+let baseParams = {
+    'tbl2psd9D3dNuGWmH': { // Oeuvres
+        airtable: {
+            table: 'tbl2psd9D3dNuGWmH',
+            wpIdField: 'fldPBiM2ymRjDFElh', // Identifiant wordpress
+            titleField: "fldXmuxv5P0exIKzf", // Nom de l'oeuvre
+            wpUrlField: 'fldBBfqDCXS0dOlrR', // Lien de la page sur le site
+            metaFieldName: 'fldZbSCH3muNgyWP3', // Meta
+            lastSyncFieldName: 'fldnG6FczChxxVh76', // Date de synchronisations
+            wpMediaIdField: 'fldtlBez86Ma3pW8L', // Identifiant photo
+        },
+        wordpress: {
+           postType: 'base-oeuvre',
+           status: 'publish',
+           content: 'fldCQy1GfABiQTeyy', // Description (FR)
+           featured_media: 'fldCvFZ0V8mjK6xsY', // Photo principale'
+    
+           acf: {
+    
+               'description': "fldCQy1GfABiQTeyy",
+               'choregraphes': "fld8gc07ofT6XbVua",
+               'annee-de-creation': 'fldHc9oZyH1n1pCzH',
+    
+               'public-cible': 'fldTp7SZnhvMYthZb',
+               'public-taxonomie': {
+                  'field': 'fldTp7SZnhvMYthZb',
+                  'model': 'public_cible'
+                },
+    
+               'etiquettes': "fldVfc73Rp1VDlCPe",
+               'etiquettes-taxonomie': {
+                  'field': 'fldVfc73Rp1VDlCPe',
+                  'model': 'etiquette_oeuvre'
+                },
             }
-       }
+        }
     }
-});
+}
+
+output.set('defaultParams', JSON.stringify(baseParams));
 ```
 
 Si une valeur du champ Airtable n'existe pas dans la taxonomie, elle sera créée dans WordPress. Les valeurs non utilisées ne sont toutefois pas supprimées de WordPress.
