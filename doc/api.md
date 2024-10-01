@@ -108,13 +108,13 @@ Les types de champs supportés par le script, pour les correspondances vers des 
 |Adresse e-mail|Email||
 |URL|Url||
 |Sélection unique|Option 1. Select|Si une valeur tirée de Airtable n'existe pas dans les options d'ACF, le champ ne sera pas synchronisé.|
-||Option 2. Taxonomy|Cette option permet d'interagir avec les taxonomies de WordPress. Le champ ACF doit être configuré pour permettre la création de termes. Les valeurs incluses dans le champs Airtable deviendront des termes dans la taxonomie ciblée. Voir les notes sur les taxonomies pour plus de détails sur le fonctionnement.|
+||Option 2. Taxonomy|Cette option permet d'interagir avec les taxonomies de WordPress. Le champ ACF doit être configuré pour permettre la création de termes. Les valeurs incluses dans le champ Airtable deviendront des termes dans la taxonomie ciblée. Voir les notes sur les taxonomies pour plus de détails sur le fonctionnement.|
 |Numéro de téléphone|Text||
 |Formule|Text ou Text Area|Le résultat de la formule, convertit en texte, sera copié dans ACF|
-|Cumul (rollup)|Text ou Text Area|Le résultat du rollup, convertit en texte, sera copié dans ACF|
+|Cumul (rollup)|Text ou Text Area|Le résultat du cumul, convertit en texte, sera copié dans ACF|
 |Date|Date Picker||
 |Date inluant l'heure|Date Time Picker||
-|Pièce jointe (avec une ou plusieurs pièces jointes)|Image ou File|Fonctionnement seulement pour les champs contenant une seule pièce jointe, dans un format d'image connu (jpg, jpeg, png, gif, svg, ico, webp) ou dans un autre format accepté par WordPress|
+|Pièce jointe (avec une ou plusieurs pièces jointes)|Image ou File|Fonctionne seulement pour les champs contenant une seule pièce jointe, dans un format d'image connu (jpg, jpeg, png, gif, svg, ico, webp) ou dans un autre format accepté par WordPress|
 |Sélection multiple|Option 1: Text|Le comportement sera identique à l'option 1 d'un champs _singleSelect_. Aucune configuration supplémentaire n'est nécessaire|
 ||Option 2: Taxonomy|Cette option permet d'interagir avec les taxonomies de WordPress. Le champ ACF doit être configuré pour permettre la création de termes. Les valeurs incluses dans le champs Airtable deviendront des termes dans la taxonomie ciblée. Voir les notes sur les taxonomies pour plus de détails sur le fonctionnement.|
 |Lien vers une autre entrée (vers une ou plusieurs entrées) (relation)|Relation|Le champs Airtable doit contenir les identifiants WordPress des contenus correspond aux relations. Voir les notes sur les relations pour plus de détails sur le fonctionnement.|
