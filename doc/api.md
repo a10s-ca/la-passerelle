@@ -104,7 +104,7 @@ Les types de champs supportés par le script, pour les correspondances vers des 
 |Type Airtable|Correspondance ACF suggérée|Notes|
 |------------|------------|------------|
 |Texte sur une seule ligne|Text||
-|Texte long|Text Area|Airtable ne permet pas de récupérer les enrichissements de textes (gras, italique...) par le script. Nous suggérons d'utiliser du texte sans mise en forme, ou bien de baliser les textes avec du HTML (\<b>, /<i>...).|
+|Texte long|Text Area|Airtable ne permet pas de récupérer les enrichissements de textes (gras, italique...) par le script. Nous suggérons d'utiliser du texte sans mise en forme, ou bien de baliser les textes avec du HTML (\<b>, \<i>...).|
 |Adresse e-mail|Email||
 |URL|Url||
 |Sélection unique|Option 1. Select|Si une valeur tirée de Airtable n'existe pas dans les options d'ACF, le champ ne sera pas synchronisé.|
