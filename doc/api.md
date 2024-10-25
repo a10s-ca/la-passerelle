@@ -199,7 +199,7 @@ output.set('defaultParams', JSON.stringify(defaultParams));
 
 Exemple avec une taxonomie ACF
 ```javascript
-let baseParams = {
+let defaultParams = {
     'tbl2psd9D3dNuGWm': { // Oeuvres
         airtable: {
             table: 'tbl2psd9D3dNuGWmx',
@@ -236,7 +236,7 @@ let baseParams = {
     }
 }
 
-output.set('defaultParams', JSON.stringify(baseParams));
+output.set('defaultParams', JSON.stringify(defaultParams));
 ```
 
 ## Relations
