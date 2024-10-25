@@ -158,35 +158,35 @@ Si une valeur du champ Airtable n'existe pas dans la taxonomie, elle sera créé
 Exemple avec une taxonomie "régulière"
 ````javascript
 let defaultParams = {
-    'tblb00KvosFf8HmdE': { // Dossiers
+    'tblb00KvosFf8Hmdx': { // Dossiers
         airtable: {
-            table: 'tblb00KvosFf8HmdE', // Dossiers
-            titleField: "fldFJ5wSQC59MSJnO", // Nom du dossier  
+            table: 'tblb00KvosFf8Hmdx', // Dossiers
+            titleField: "fldFJ5wSQC59MSJnx", // Nom du dossier  
 
-            metaFieldName: 'fldGmie09tmm6HTeV', // Meta 
-            lastSyncFieldName: 'fldG0r0AY1bZ4PdOe', // Date de synchronisation
+            metaFieldName: 'fldGmie09tmm6HTex', // Meta 
+            lastSyncFieldName: 'fldG0r0AY1bZ4PdOx', // Date de synchronisation
 
         },
         wordpress: {
             postType: 'cpt_members',
-            featured_media: 'fldjxnQtsSB4ZvHH3', // Image répertoire
-            content: 'fldPIMUrW1c4JmDqV', // Description répertoire
+            featured_media: 'fldjxnQtsSB4ZvHHx', // Image répertoire
+            content: 'fldPIMUrW1c4JmDqx', // Description répertoire
             status: 'publish',
 
             // Taxonomies
             cpt_members_style: { 
-                'field': 'fldBRkOYenTJaaqoG', // Styles musicaux
+                'field': 'fldBRkOYenTJaaqox', // Styles musicaux
                 'model': 'cpt_members_style'
             },
             cpt_members_region: { 
-                'field': 'fldiEuEHmkwFR0AE3', // Région administrative
+                'field': 'fldiEuEHmkwFR0AEx', // Région administrative
                 'model': 'cpt_members_region'
             },
 
             acf: {
                     // Champs ACF                
-                    'credit_photo': 'fldfyi0XgeFy6mCQC', // Crédit photo de l'image répertoire
-                    'website_link': 'fldQPcLFqKcvLSIZh', // Site internet
+                    'credit_photo': 'fldfyi0XgeFy6mCQx', // Crédit photo de l'image répertoire
+                    'website_link': 'fldQPcLFqKcvLSIZx', // Site internet
 
             },
         }
@@ -200,37 +200,35 @@ output.set('defaultParams', JSON.stringify(defaultParams));
 Exemple avec une taxonomie ACF
 ```javascript
 let baseParams = {
-    'tbl2psd9D3dNuGWmH': { // Oeuvres
+    'tbl2psd9D3dNuGWm': { // Oeuvres
         airtable: {
-            table: 'tbl2psd9D3dNuGWmH',
-            wpIdField: 'fldPBiM2ymRjDFElh', // Identifiant wordpress
-            titleField: "fldXmuxv5P0exIKzf", // Nom de l'oeuvre
-            wpUrlField: 'fldBBfqDCXS0dOlrR', // Lien de la page sur le site
-            metaFieldName: 'fldZbSCH3muNgyWP3', // Meta
-            lastSyncFieldName: 'fldnG6FczChxxVh76', // Date de synchronisations
-            wpMediaIdField: 'fldtlBez86Ma3pW8L', // Identifiant photo
+            table: 'tbl2psd9D3dNuGWmx',
+            wpIdField: 'fldPBiM2ymRjDFElx', // Identifiant wordpress
+            titleField: "fldXmuxv5P0exIKzx", // Nom de l'oeuvre
+            wpUrlField: 'fldBBfqDCXS0dOlrx', // Lien de la page sur le site
+            metaFieldName: 'fldZbSCH3muNgyWPx', // Meta
+            lastSyncFieldName: 'fldnG6FczChxxVh7x', // Date de synchronisations
+            wpMediaIdField: 'fldtlBez86Ma3pW8x', // Identifiant photo
         },
         wordpress: {
            postType: 'base-oeuvre',
            status: 'publish',
-           content: 'fldCQy1GfABiQTeyy', // Description (FR)
-           featured_media: 'fldCvFZ0V8mjK6xsY', // Photo principale'
+           content: 'fldCQy1GfABiQTeyx', // Description (FR)
+           featured_media: 'fldCvFZ0V8mjK6xsx', // Photo principale'
     
            acf: {
     
-               'description': "fldCQy1GfABiQTeyy",
-               'choregraphes': "fld8gc07ofT6XbVua",
-               'annee-de-creation': 'fldHc9oZyH1n1pCzH',
+               'description': "fldCQy1GfABiQTeyx",
+               'choregraphes': "fld8gc07ofT6XbVux",
+               'annee-de-creation': 'fldHc9oZyH1n1pCzx',
     
-               'public-cible': 'fldTp7SZnhvMYthZb',
                'public-taxonomie': {
-                  'field': 'fldTp7SZnhvMYthZb',
+                  'field': 'fldTp7SZnhvMYthZx',
                   'model': 'public_cible'
                 },
     
-               'etiquettes': "fldVfc73Rp1VDlCPe",
                'etiquettes-taxonomie': {
-                  'field': 'fldVfc73Rp1VDlCPe',
+                  'field': 'fldVfc73Rp1VDlCPx',
                   'model': 'etiquette_oeuvre'
                 },
             }
