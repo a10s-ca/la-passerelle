@@ -13,7 +13,7 @@ Le champ "Date d'échéance de la dernière adhésion" est un champ de type cumu
 Nouvelle formule pour le champ "Statut de synchronisation modifié" (seule la première ligne a été modifiée) :
 
 ````
-IF(IF(IS_AFTER(DATEADD({Date d'échéance de la dernière adhésion},30,'day'),TODAY()),"afficher"),
+IF(IF({Date d'échéance de la dernière adhésion}, IF(IS_AFTER(DATEADD({Date d'échéance de la dernière adhésion},30,'day'),TODAY()),"afficher")),
 
   IF(NOT({Meta}), "à synchroniser",
 
