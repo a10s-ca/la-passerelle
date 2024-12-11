@@ -293,15 +293,13 @@ Activez l'automatisation.
 
 #### 2.7 Créer une automatisation d'appel pour la publication et la mise à jour
 
-Créer une automatisation
+Créer une automatisation et nommez-la "{{Nom de la table}} - publier et/ou mettre à jour".
 
-Nommez votre automatisation "{{Nom de la table}} - publier et/ou mettre à jour".
-
-Ajoutez un déclencheur / Lorsqu'une entrée correspond aux condition
+Ajoutez un déclencheur de type "Lorsqu'une entrée correspond aux condition".
 - Tableau : Sélectionnez le tableau qui contient vos données à envoyer sur Wordpress
 - Conditions : Quand "Statut de synchronisation" contient "à synchroniser"
 
-"Ajoutez une action ou une logique avancée" / Choississez "Excécuter le script"
+Ajoutez une action de type "Excécuter le script".
 
 Add input variable
 
