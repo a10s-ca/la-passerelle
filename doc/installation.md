@@ -121,7 +121,11 @@ IF({Afficher sur le site web},
 
 #### 2.1. Créer une automatisation déclenchée par un lien HTTP («webhook»)
 
-Dans «Automatisations», choisissez «Céer une automatisation», et nommez l'automatisation (par exemple, «La Passerelle - Script principal»). Cliquez sur «Ajouter un déclencheur», puis sélectionnez le déclencheur «Lorsqu'un point d'ancrage wev est reçu». L'automatisation devrait ressembler à ceci:
+Créez une nouvelle automatisation et nommez-la «La Passerelle - Automatisation principale».
+
+Ajoutez un déclancheur de type «Lorsqu'un point d'ancrage wev est reçu». 
+
+L'automatisation devrait ressembler à ceci:
 
 ![Saisie d'écran de l'outil Automation de Airtable](../images/airtable2.1.png)
 
@@ -130,11 +134,11 @@ Copiez le lien disponible sous «Envoyez un exemple de point d'ancrage web vers�
 
 #### 2.2. Installer le script de paramétrage
 
-Ce script contient simplement un objet dont les clés correspondent aux noms des tables, et les valeurs contiennent un objet de configuration. 
+Dans l'automatisation que vous venez de créer, ajoutez une première action de type «Exécuter un script». 
 
-Dans l'automatisation, sous «Run actions», cliquez sur «+ Add action», puis sélectionnez l'option «Run script».
+Dans la case «Description», indiquez «Script de paramétrage».
 
-La fenêtre d'édition de script vous sera présentée. Supprimez le contenu de la section «Code» et copiez-y le code suivant :
+Ouvrez la fenêtre d'édition de code, supprimez le contenu par défaut et copiez-y le code suivant :
 
 ````
 let defaultParams = {
@@ -162,6 +166,8 @@ let defaultParams = {
 output.set('defaultParams', JSON.stringify(defaultParams));
 
 ````
+
+Ce script contient simplement un objet dont les clés correspondent aux noms des tables, et les valeurs contiennent un objet de configuration. 
 
 Remplacez tous les {{placeholders}} par les informations provenant de votre base de données.
 
@@ -228,10 +234,11 @@ La valeur de sortie de ce premier bloc de script sera configurée dans une étap
 
 #### 2.3. Installer le script de synchronisation
 
-Dans l'automatisation, cliquez sur «Ajouter une action ou une logique avancée», puis sélectionnez l'option «Exécuter le script».
+Dans l'automatisation que vous venez de créer, ajoutez une seconde action de type «Exécuter un script». 
 
-La fenêtre d'édition de script vous sera présentée. Supprimez le contenu de la section «Code» et copiez y le contenu du [script principal](../scripts/main.js).
+Dans la case «Description», indiquez «Script de synchronisation».
 
+Ouvrez la fenêtre d'édition de code, supprimez le contenu par défaut et copiez-y le contenu du [script principal](../scripts/main.js).
 
 #### 2.4. Configurer les accès à WordPress et les variables de paramétrage du script
 
