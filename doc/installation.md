@@ -256,10 +256,7 @@ Pour compléter la configuration de la quatrième variable (params), des donnée
 
 Nous suggérons de créer une extension dédiée à ce test. Pour ce faire:
 
-* retournez à la section "données" votre base en cliquant sur «Data» dans la barre d'outil du haut de l'écran
-* cliquez sur «Extensions»
-* cliquez sur «+ Add an extension», choisissez l'extension «Scripting», puis cliquez sur «Add extension»
-* la fenêtre d'édition de script apparaîtra. Au besoin, fermez la fenêtre de présentation en cliquant sur «Get Started», puis «Start from scratch»
+* dans le module «Extensions», ajoutez une nouvelle extension «Scripting»
 * supprimez le contenu de la fenêtre d'édition du script
 * copiez-y le contenu du [script de test](../scripts/test.js), et remplacez `{{URL}}` par le lien que vous avez noté à l'étape 2.1
 
@@ -268,7 +265,7 @@ Ensuite, il suffit d'exécuter le script de test en cliquant sur le bouton «Run
 ![Saisie d'écran de l'extension Scripting de Airtable](../images/airtable2.4.png)
 
 
-> **Note:** Vous pouvez supprimer l'extension utilisée pour le test, elle ne sera plus utile.
+> **Note:** Vous pouvez supprimer l'extension utilisée pour ce test, elle ne sera plus utile.
 
 
 #### 2.6. Compléter les configurations des variables de paramétrage du script
