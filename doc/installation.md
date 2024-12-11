@@ -169,7 +169,7 @@ Remplacez tous les {{placeholders}} par les informations provenant de votre base
 
 Pour obtenir l'ID d'un champ, vous pouvez utiliser le Field Manager (voir l'article [Finding Airtable IDs](https://support.airtable.com/docs/finding-airtable-ids) dans la documentation officielle Airtable).
 
-Pour obtenir l'ID d'une table, vous pouvez utiliser le script suivant, dans une extension :
+Pour obtenir l'ID d'une table, vous pouvez décortiquer son URL, ou bien vous pouvez utiliser le script suivant (dans une extension) pour obtenir les IDs de toutes vos tables :
 
 ````
 for (const table of base.tables) {
