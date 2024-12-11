@@ -123,13 +123,13 @@ IF({Afficher sur le site web},
 
 Créez une nouvelle automatisation et nommez-la «La Passerelle - Automatisation principale».
 
-Ajoutez un déclancheur de type «Lorsqu'un point d'ancrage wev est reçu». 
+Ajoutez un déclancheur de type «Lorsqu'un point d'ancrage web est reçu». 
 
 L'automatisation devrait ressembler à ceci:
 
 ![Saisie d'écran de l'outil Automation de Airtable](../images/airtable2.1.png)
 
-Copiez le lien disponible sous «Envoyez un exemple de point d'ancrage web vers» et conservez le dans un endroit sécurisé.
+Copiez le lien disponible sous «Envoyez un exemple de point d'ancrage web vers» et conservez-le dans un endroit sécurisé.
 
 
 #### 2.2. Installer le script de paramétrage
