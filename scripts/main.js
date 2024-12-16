@@ -371,8 +371,9 @@ async function main()  {
         };
 
         // prepare other body params for the WP REST API call (anything that is not title, content, media or ACF)
-        let baseParams = ['postType', 'titleField', 'content', 'featured_media', 'status', 'acf'];
+        let baseParams = ['postType', 'titleField', 'content', 'featured_media', 'status', 'acf', 'meta'];
         let otherBodyParams = {};
+        console.log(params.wordpress);
         for (const fieldName of Object.keys(params.wordpress).filter(value => !baseParams.includes(value))) {
             await buildBodyParams(params.wordpress[fieldName], otherBodyParams, fieldName, record, meta);
         };
@@ -383,6 +384,16 @@ async function main()  {
             await buildBodyParams(params.wordpress.acf[acfFieldName], acf, acfFieldName, record, meta);
         };
         otherBodyParams.acf = acf;
+
+        // prepare WP meta fields
+        // Note: the WP meta fields are not to be confused with the meta field used by the current script
+        // to store information used to sync data with the WP REST API. WP meta fields refer strictly to
+        // the WP functionnalities.
+        let wpMetaFields = {};
+        for (const wpMetaField of Object.keys(params.wordpress.meta || {})) {
+            await buildBodyParams(params.wordpress.meta[wpMetaField], wpMetaFields, wpMetaField, record, meta);
+        };
+        otherBodyParams.meta = wpMetaFields;
 
         // perform the actual update to WordPress
         let response = await postToWordPress(params.wordpress.postType, wordpressPostId, title, content, featuredMedia, otherBodyParams)
