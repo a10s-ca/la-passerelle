@@ -5,6 +5,7 @@ if (config.defaultParams) defaultParams = JSON.parse(config.defaultParams);
 let hookParams = {};
 if (config.params) hookParams = JSON.parse(config.params);
 let params = { ...defaultParams[hookParams.airtable.table], ...hookParams }; // first level merge of default and hook params
+
 params.airtable = { ...defaultParams[hookParams.airtable.table].airtable, ...params.airtable }
 params.wordpress = { ...defaultParams[hookParams.airtable.table].wordpress, ...params.wordpress }
 
@@ -241,6 +242,7 @@ async function findOrCreateRelatedModels(field, record, wordpressDetails, meta) 
     let res = [];
     switch(field.type) {
         case 'multipleSelects':
+        case 'multipleRecordLinks':
             for (const term of (record.getCellValue(field) || [])) {
                 let id = await findOrCreateModelTermId(modelName, term.name, meta);
                 res.push(id);
@@ -295,6 +297,7 @@ async function buildBodyParams(fieldConfig, targetObj, targetFieldName, record, 
         case 'multipleSelects':
         case 'singleSelect':
         case 'multipleLookupValues':
+        case 'multipleRecordLinks':
         case 'formula':
             if (value && value.length > 0) {
                 if (wordpressDetails.model) {
