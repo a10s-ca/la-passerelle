@@ -313,6 +313,18 @@ async function buildBodyParams(fieldConfig, targetObj, targetFieldName, record, 
                 targetObj[targetFieldName] = null;
             }
             break;
+        case 'date':
+        case 'dateTime':
+            if (value && value.length > 0) {
+                targetObj[targetFieldName] = value;
+                if (params.wordpress.cpt_system && params.wordpress.cpt_system == 'jetengine') {
+                    let d = new Date(value);
+                    targetObj[targetFieldName] = d.getTime() / 1000; // getTime() returns milliseconds, JetEngine needs seconds
+                };
+            } else {
+                targetObj[targetFieldName] = null;
+            }
+            break;
         default: // 'singleLineText', 'multilineText', 'email', 'url', 'singleSelect', 'phoneNumber', 'rollup', 'date, 'dateTime'
             if (value && value.length > 0) {
                 targetObj[targetFieldName] = value;
