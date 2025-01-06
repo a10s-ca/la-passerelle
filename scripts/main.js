@@ -74,8 +74,11 @@ async function postOrFindModelTermToWordpress(modelName, term) {
         }
     };
 
-    let url = APIBASE + modelName.replaceAll('-', '_');
-        // we need .replaceAll('-', '_') because taxonomy names can contain dashes, but not API routes
+    let url = APIBASE + modelName;
+    if (!(params.wordpress.cpt_system && params.wordpress.cpt_system == 'jetengine')) url = url.replaceAll('-', '_');
+        // earlier versions of the script add the replaceAll in all cases with the following note:
+        // > we need .replaceAll('-', '_') because taxonomy names can contain dashes, but not API routes
+        // I am not sure but this probably only applies to ACF, so not enforcing it for JetEngine
     let createdTerm = await fetch(url, request);
     let response = await createdTerm.json();
 
@@ -370,8 +373,8 @@ async function main()  {
             }
         };
 
-        // prepare other body params for the WP REST API call (anything that is not title, content, media or ACF)
-        let baseParams = ['postType', 'titleField', 'content', 'featured_media', 'status', 'acf', 'meta'];
+        // prepare other body params for the WP REST API call (anything that is not title, content, media, ACF, etc.)
+        let baseParams = ['postType', 'titleField', 'content', 'featured_media', 'status', 'acf', 'meta', 'cpt_system'];
         let otherBodyParams = {};
         console.log(params.wordpress);
         for (const fieldName of Object.keys(params.wordpress).filter(value => !baseParams.includes(value))) {

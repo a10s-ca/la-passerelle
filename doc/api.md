@@ -40,7 +40,7 @@ Les paramètres passés de cette façon seront fusionnés avec les paramètres p
 
 ## Correspondance des champs
 
-La clé `params.wordpress` contient les configuration pour faire correspondre les entrées dans WordPress avec les champs de la table Airtable choisie.
+La clé `params.wordpress` contient les configurations pour faire correspondre les entrées dans WordPress avec les champs de la table Airtable choisie.
 
 Pour tous les types de contenus (articles, pages ou types de contenus personnalisés), le script permet d'indiquer les valeurs suivantes:
 
@@ -190,9 +190,9 @@ let defaultParams = {
     'tblb00KvosFf8Hmdx': { // Dossiers
         airtable: {
             table: 'tblb00KvosFf8Hmdx', // Dossiers
-            titleField: "fldFJ5wSQC59MSJnx", // Nom du dossier  
+            titleField: "fldFJ5wSQC59MSJnx", // Nom du dossier
 
-            metaFieldName: 'fldGmie09tmm6HTex', // Meta 
+            metaFieldName: 'fldGmie09tmm6HTex', // Meta
             lastSyncFieldName: 'fldG0r0AY1bZ4PdOx', // Date de synchronisation
 
         },
@@ -203,17 +203,17 @@ let defaultParams = {
             status: 'publish',
 
             // Taxonomies
-            cpt_members_style: { 
+            cpt_members_style: {
                 'field': 'fldBRkOYenTJaaqox', // Styles musicaux
                 'model': 'cpt_members_style'
             },
-            cpt_members_region: { 
+            cpt_members_region: {
                 'field': 'fldiEuEHmkwFR0AEx', // Région administrative
                 'model': 'cpt_members_region'
             },
 
             acf: {
-                    // Champs ACF                
+                    // Champs ACF
                     'credit_photo': 'fldfyi0XgeFy6mCQx', // Crédit photo de l'image répertoire
                     'website_link': 'fldQPcLFqKcvLSIZx', // Site internet
 
@@ -244,18 +244,18 @@ let defaultParams = {
            status: 'publish',
            content: 'fldCQy1GfABiQTeyx', // Description (FR)
            featured_media: 'fldCvFZ0V8mjK6xsx', // Photo principale'
-    
+
            acf: {
-    
+
                'description': "fldCQy1GfABiQTeyx",
                'choregraphes': "fld8gc07ofT6XbVux",
                'annee-de-creation': 'fldHc9oZyH1n1pCzx',
-    
+
                'public-taxonomie': {
                   'field': 'fldTp7SZnhvMYthZx',
                   'model': 'public_cible'
                 },
-    
+
                'etiquettes-taxonomie': {
                   'field': 'fldVfc73Rp1VDlCPx',
                   'model': 'etiquette_oeuvre'
@@ -299,3 +299,9 @@ config.params = JSON.stringify({
     }
 });
 ```
+
+## Particularités des extensions WordPress pour les types de contenus personnalisés
+
+La Passerelle vise à être compatible avec plusieurs extensions WordPress de types de contenus personnalisés. Ces extensions n'offrent toutefois pas des API identifiques. Dans certains cas, il est donc nécessaire de préciser à La Passerelle quelle système est utilisé.
+
+La clé `wordpress.cpt_system` est utilisée pour préciser le système utilisé. Les valeurs autorisées sont `jetengine` (pour JetEngine de Crocobloc) et `acf` (qui est la valeur par défaut si la clé `cpt_system` n'est pas précisée).
