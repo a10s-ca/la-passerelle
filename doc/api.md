@@ -152,6 +152,27 @@ config.params = JSON.stringify({
 
 ## Cases à cocher
 
+La Passerelle ne supporte pas les champs de type case à cocher avec CPT pour le moment.
+
+L'équivalent JetEngine du champ Airtable de type "Case à cocher" est le champ de type "Sélection - Switcher". Si toutefois vous souhaitez plutôt utiliser un champ JetEngine de type "Sélection - Checkbox" avec une seule option de sélection, vous pouvez le faire en utilisant la configuration suivante :
+
+```
+'nom du champ CMF' : {
+    'field': "nom du champ Airtable",
+    'jetengine-type': 'checkbox',
+    'jetengine-option': 'nom de l'option de sélection dans le champ CMF'
+}
+```
+
+Exemple :
+```
+'concert-enligne' : {
+    'field': "Concert en ligne",
+    'jetengine-type': 'checkbox',
+    'jetengine-option': 'oui'
+}
+```
+
 ## Taxonomies
 
 Il est possible d'utiliser un champ Airtable pour gérer une taxonomie dans Wordpress. Les types de champs Airtable supportés sont :
