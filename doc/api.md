@@ -19,7 +19,7 @@ config.params = JSON.stringify({
        title: 'titre',
        content: 'contenu',
        featured_media: 83,
-       acf: {
+       acf: { // remplacez ici acf par meta si vous utilises JetEngine de Crocoblocks
             'nom': 'Nom',
             'prenom': 'Prénom',
             ...
@@ -50,10 +50,17 @@ Pour tous les types de contenus (articles, pages ou types de contenus personnali
      * l'identifiant numérique du média WordPress, dans un champ texte ou nombre
      * une image, dans un champs de pièce jointe Airtable
 
-Dans le cas des types de contenus personnalisés («custom post types») qui utilisent des champs avancés («custom fields»), la clé `params.wordpress.acf` permet de spécifier les correspondances. Les correspondance peuvent prendre deux formes:
+Dans le cas des types de contenus personnalisés («custom post types» (CPT)) qui utilisent des champs avancés («advanced custom fields» (ACF)), la clé `params.wordpress.acf` permet de spécifier les correspondances. 
 
-* `'nom du champ ACF': 'nom du champ Airtable'` dans la plupart des cas
-* `'nom du champ ACF': {objet de configuration avancée}` pour les correspondances de champs impliquant des modèles liés (relations et taxonomies). Les objets de configuration avancés sont décrits dans les sections dédiées plus bas.
+*Si vous utilisez plutôt JetEngine de Crocoblock avec les champs meta personnalisés («custom meta fields» (CMF)), la clé params.wordpress.meta permet de spécifier les correspondances.*
+
+Dans les deux cas (CPT ou JetEngine), les correspondances peuvent prendre trois formes:
+
+* `'nom du champ ACF/CMF': 'nom du champ Airtable'` dans la plupart des cas
+* `'nom du champ ACF/CMF': {objet de configuration avancée}` pour les champs de type "Case à cocher" (supporté pour JetEngine seulement pour le moment)
+* `'nom du champ ACF/CMF': {objet de configuration avancée}` pour les correspondances de champs impliquant des modèles liés (relations et taxonomies).
+
+Les objets de configuration avancés sont décrits dans les sections dédiées plus bas.
 
 Note au sujet du titre: la valeur dans `params.wordpress.title` est une chaîne de caractères qui sera utilisée telle quelle comme titre de contenu dans WordPress. Il est possible de ne pas utiliser ce paramètre, et de plutôt indiquer le nom d'un _champ Airtable_ contenant la valeur souhaitée pour le titre dans la clé `params.airtable.titleField`.
 
@@ -142,6 +149,8 @@ config.params = JSON.stringify({
     }
 });
 ```
+
+## Cases à cocher
 
 ## Taxonomies
 
