@@ -54,10 +54,9 @@ Dans le cas des types de contenus personnalisés («custom post types» (CPT)) q
 
 *Si vous utilisez plutôt JetEngine de Crocoblock avec les champs meta personnalisés («custom meta fields» (CMF)), la clé params.wordpress.meta permet de spécifier les correspondances.*
 
-Dans les deux cas (CPT ou JetEngine), les correspondances peuvent prendre trois formes:
+Dans les deux cas (CPT ou JetEngine), les correspondances peuvent prendre deux formes:
 
 * `'nom du champ ACF/CMF': 'nom du champ Airtable'` dans la plupart des cas
-* `'nom du champ ACF/CMF': {objet de configuration avancée}` pour les champs de type "Case à cocher" (supporté pour JetEngine seulement pour le moment)
 * `'nom du champ ACF/CMF': {objet de configuration avancée}` pour les correspondances de champs impliquant des modèles liés (relations et taxonomies).
 
 Les objets de configuration avancés sont décrits dans les sections dédiées plus bas.
