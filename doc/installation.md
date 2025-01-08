@@ -150,6 +150,7 @@ let defaultParams = {
             ...
         },
         wordpress: {
+            cpt_system: 'jetengine', // Inclure cette ligne seulement si vous utilisez JetEngine de Crocobloc
             postType: '{{Nom du post type appropié pour cette table dans Wordpress}}',
             acf: {
                     '{{Nom du champ dans Wordpress}}': '{{ID du champ dans Airtable}}', // {{Nom du champ dans Airtable}}
