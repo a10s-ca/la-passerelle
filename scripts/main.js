@@ -237,10 +237,6 @@ async function findOrCreateModelTermId(modelName, term, meta) {
 // managed with the same paths and verbs in the REST API. This function can thus
 // be used to manage relations in general, and has been tested with taxonomies.
 async function findOrCreateRelatedModels(field, record, wordpressDetails, meta) {
-    console.log("RELATED MODELS");
-    console.log(field);
-    console.log(wordpressDetails);
-    console.log(meta);
     let modelName = wordpressDetails.model;
     let res = [];
     switch(field.type) {
@@ -346,6 +342,20 @@ async function buildBodyParams(fieldConfig, targetObj, targetFieldName, record, 
     };
 }
 
+// Recursively explore nested objects to build body params, eg. for
+// nested ACF groups
+async function buildBodyParamsRecursive(input, target, record, meta) {
+    for (const key of Object.keys(input)) {
+        const value = input[key];
+
+        if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+            target[key] = {};
+            await buildBodyParamsRecursive(value, target[key], record, meta);
+        } else {
+            await buildBodyParams(value, target, key, record, meta);
+        }
+    }
+}
 
 // determing which records should be synced
 // TODO validate other parameters before starting?
@@ -399,16 +409,13 @@ async function main()  {
         // prepare other body params for the WP REST API call (anything that is not title, content, media, ACF, etc.)
         let baseParams = ['postType', 'titleField', 'content', 'featured_media', 'status', 'acf', 'meta', 'cpt_system'];
         let otherBodyParams = {};
-        console.log(params.wordpress);
         for (const fieldName of Object.keys(params.wordpress).filter(value => !baseParams.includes(value))) {
             await buildBodyParams(params.wordpress[fieldName], otherBodyParams, fieldName, record, meta);
         };
 
         // prepare ACF content
         let acf = {};
-        for (const acfFieldName of Object.keys(params.wordpress.acf || {})) {
-            await buildBodyParams(params.wordpress.acf[acfFieldName], acf, acfFieldName, record, meta);
-        };
+        await buildBodyParamsRecursive(params.wordpress.acf || {}, acf, record, meta);
         otherBodyParams.acf = acf;
 
         // prepare WP meta fields
