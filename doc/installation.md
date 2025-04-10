@@ -32,7 +32,7 @@ Enfin, il faut créer un usager et son mot de passe pour le script Airtable. Les
 
 #### 1.3. Show in rest
 
-Si des taxonomies sont utilisées, elles doivent être mise à la disposition de l'API en utilisant le paramètre "show_in_rest".
+Pour exposer un Custom Post Type (CPT) ou une taxonomie personnalisée à l'API REST de WordPress, vous devez activer le paramètre show_in_rest => true lors de leur enregistrement.
 
 Exemple de code pour une taxonomie
 ````
