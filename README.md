@@ -22,9 +22,9 @@ L'utilisation de La passerelle demande de compléter plusieurs étapes de config
 
 Les outils de synchronisation devront être personnalisés selon vos besoins.
 
-Il s'agit essentiellement de créer des extensions (pour les synchronisation déclenchées manuellement) ou des automatisations (pour les synchronisations déclenchées de façon périodique, ou en réaction à un déclencheur externe à la base de données) qui utiliseront le script principal, en lui envoyant des paramètres qui permettront de faire des choix sur les données à synchroniser (la table, les champs et les enregistrements ciblés, et les correspondances avec les éléments équivalents dans WordPress).
+Il s'agit essentiellement de créer des automatisations qui utiliseront le script principal, en lui envoyant des paramètres qui permettront de faire des choix sur les données à synchroniser (la table, les champs et les enregistrements ciblés, et les correspondances avec les éléments équivalents dans WordPress).
 
-Dans tous les cas, il s'agit de faire un appel au lien HTTP («webhook») du script principal, en utilisant des valeurs adaptées dans la variable `params`. Les options de la variable `params` sont documentées dans la section [API](doc/api.md). Le lien HTTP peut être appelé depuis une extension, une automatisation, ou même une application externe.
+Dans tous les cas, il s'agit de faire un appel au lien HTTP («webhook») du script principal, en utilisant des valeurs adaptées dans la variable `params`. Les options de la variable `params` sont documentées dans la section [API](doc/api.md). Le lien HTTP peut être appelé depuis une automatisation, une extension, ou même une application externe.
 
 ### Éléments requis dans la table à synchroniser
 
