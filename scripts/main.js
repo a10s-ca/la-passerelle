@@ -74,11 +74,12 @@ async function postOrFindModelTermToWordpress(modelName, term) {
         }
     };
 
-    let url = APIBASE + modelName;
-    if (!(params.wordpress.cpt_system && params.wordpress.cpt_system == 'jetengine')) url = url.replaceAll('-', '_');
-        // earlier versions of the script add the replaceAll in all cases with the following note:
+    let safeModelName = modelName;
+    if (!(params.wordpress.cpt_system && params.wordpress.cpt_system == 'jetengine')) safeModelName = safeModelName.replaceAll('-', '_');
+        // earlier versions of the script hdd the replaceAll in all cases with the following note:
         // > we need .replaceAll('-', '_') because taxonomy names can contain dashes, but not API routes
         // I am not sure but this probably only applies to ACF, so not enforcing it for JetEngine
+    let url = APIBASE + safeModelName;
     let createdTerm = await fetch(url, request);
     let response = await createdTerm.json();
 
