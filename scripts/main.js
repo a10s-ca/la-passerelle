@@ -267,6 +267,57 @@ async function findOrCreateRelatedModels(field, record, wordpressDetails, meta) 
     return res;
 }
 
+// Utility to convert rich fields to HTML
+function markdownToHtml(markdown) {
+  if (!markdown) return "";
+
+  // Escape HTML special characters
+  markdown = markdown
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+
+  // Code blocks (```code```)
+  markdown = markdown.replace(/```([\s\S]*?)```/g, "<pre><code>$1</code></pre>");
+
+  // Inline code (`code`)
+  markdown = markdown.replace(/`([^`\n]+)`/g, "<code>$1</code>");
+
+  // Headings
+  markdown = markdown.replace(/^### (.*)$/gm, "<h3>$1</h3>");
+  markdown = markdown.replace(/^## (.*)$/gm, "<h2>$1</h2>");
+  markdown = markdown.replace(/^# (.*)$/gm, "<h1>$1</h1>");
+
+  // Blockquotes
+  markdown = markdown.replace(/^> (.*)$/gm, "<blockquote>$1</blockquote>");
+
+  // Numbered lists
+  markdown = markdown.replace(/^\d+\. (.*)$/gm, "<li>$1</li>");
+  markdown = markdown.replace(/(<li>.*<\/li>)/gms, "<ol>$1</ol>");
+
+  // Bulleted lists
+  markdown = markdown.replace(/^[-*] (.*)$/gm, "<li>$1</li>");
+  markdown = markdown.replace(/(<li>.*<\/li>)/gms, "<ul>$1</ul>");
+
+  // Checkboxes
+  markdown = markdown.replace(/\[ \] (.*)/g, '<input type="checkbox" disabled> $1');
+  markdown = markdown.replace(/\[x\] (.*)/gi, '<input type="checkbox" checked disabled> $1');
+
+  // Bold, italic, strikethrough
+  markdown = markdown.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+  markdown = markdown.replace(/\*(.*?)\*/g, "<em>$1</em>");
+  markdown = markdown.replace(/~~(.*?)~~/g, "<del>$1</del>");
+
+  // Links
+  markdown = markdown.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+
+  // Line breaks
+  markdown = markdown.replace(/\n/g, "<br>");
+
+  return markdown;
+}
+
+
 // Finds the configs for fiedlName in the script params, and writes the
 // corresponding values in targetObj, which is structured to be used in the
 // body of a WP REST API call
@@ -284,6 +335,7 @@ async function buildBodyParams(fieldConfig, targetObj, targetFieldName, record, 
     // get the Airtable field and process it
     let field = table.getField(airtableFieldName);
     let value = record.getCellValueAsString(airtableFieldName);
+    let rawValue = record.getCellValueAsString(airtableFieldName); // we need this for richText fields
     switch(field.type) {
         case 'multipleAttachments':
             let newMeta = await findOrCreateWordpressAttachment(table, record, airtableFieldName, meta);
@@ -329,6 +381,13 @@ async function buildBodyParams(fieldConfig, targetObj, targetFieldName, record, 
                     targetObj[targetFieldName] = {};
                     targetObj[targetFieldName][fieldConfig['jetengine-option']] = true;
                 };
+            } else {
+                targetObj[targetFieldName] = null;
+            }
+            break;
+        case 'richText':
+            if (value && value.length > 0) {
+                targetObj[targetFieldName] = markdownToHtml(rawValue);
             } else {
                 targetObj[targetFieldName] = null;
             }
@@ -391,7 +450,13 @@ async function main()  {
         let content = null;
         let featuredMedia = null;
         if (params.wordpress && params.wordpress.content) {
-            content = record.getCellValueAsString(params.wordpress.content);
+            let field = table.getField(params.wordpress.content);
+            if (field.type == 'richText') {
+                content = markdownToHtml(record.getCellValue(params.wordpress.content));
+            }
+            else {
+                content = record.getCellValueAsString(params.wordpress.content);
+            };
         };
         if (params.wordpress && params.wordpress.featured_media) {
             let airtableFieldName = params.wordpress.featured_media;
