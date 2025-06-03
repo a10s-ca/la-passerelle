@@ -51,6 +51,7 @@ async function postToWordPress(postType, wordpressPostId, title, content, featur
     };
 
     console.log("REQUËTE");
+    console.log(APIBASE + postType + "/" + wordpressPostId);
     console.log(request);
 
     let createdPost = await fetch(APIBASE + postType + "/" + wordpressPostId, request);
@@ -335,7 +336,7 @@ async function buildBodyParams(fieldConfig, targetObj, targetFieldName, record, 
     // get the Airtable field and process it
     let field = table.getField(airtableFieldName);
     let value = record.getCellValueAsString(airtableFieldName);
-    let rawValue = record.getCellValueAsString(airtableFieldName); // we need this for richText fields
+    let rawValue = record.getCellValue(airtableFieldName); // we need this for richText fields
     switch(field.type) {
         case 'multipleAttachments':
             let newMeta = await findOrCreateWordpressAttachment(table, record, airtableFieldName, meta);
