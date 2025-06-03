@@ -251,7 +251,15 @@ async function findOrCreateRelatedModels(field, record, wordpressDetails, meta) 
             break;
         case 'multipleLookupValues':
             for (const term of (record.getCellValue(field) || [])) {
-                let id = await findOrCreateModelTermId(modelName, term, meta);
+                // lookup could be actual records, or simply WordPress post ids
+                // so the logic here is to check if we have ints, we assume they are
+                // WP post ids and use them directly; otherwise we try to find or create
+                // the term (post) in the model (post type)
+                let candidateId = parseInt(term);
+                let id = candidateId;
+                if (isNaN(candidateId)) {
+                    id = await findOrCreateModelTermId(modelName, term, meta);
+                }
                 await res.push(id);
             };
             break;
@@ -336,7 +344,7 @@ async function buildBodyParams(fieldConfig, targetObj, targetFieldName, record, 
     // get the Airtable field and process it
     let field = table.getField(airtableFieldName);
     let value = record.getCellValueAsString(airtableFieldName);
-    let rawValue = record.getCellValue(airtableFieldName); // we need this for richText fields
+    let rawValue = record.getCellValueAsString(airtableFieldName); // we need this for richText fields
     switch(field.type) {
         case 'multipleAttachments':
             let newMeta = await findOrCreateWordpressAttachment(table, record, airtableFieldName, meta);
@@ -409,7 +417,7 @@ async function buildBodyParamsRecursive(input, target, record, meta) {
     for (const key of Object.keys(input)) {
         const value = input[key];
 
-        if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+        if (typeof value === 'object' && value !== null && !Array.isArray(value) && !value.model) {
             target[key] = {};
             await buildBodyParamsRecursive(value, target[key], record, meta);
         } else {
