@@ -368,7 +368,7 @@ async function buildBodyParams(fieldConfig, targetObj, targetFieldName, record, 
                     targetObj[targetFieldName] = value;
                 }
             } else {
-                targetObj[targetFieldName] = null;
+                targetObj[targetFieldName] = "";
             }
             break;
         case 'date':
@@ -380,7 +380,7 @@ async function buildBodyParams(fieldConfig, targetObj, targetFieldName, record, 
                     targetObj[targetFieldName] = d.getTime() / 1000; // getTime() returns milliseconds, JetEngine needs seconds
                 };
             } else {
-                targetObj[targetFieldName] = null;
+                targetObj[targetFieldName] = "";
             }
             break;
         case 'checkbox':
@@ -391,21 +391,21 @@ async function buildBodyParams(fieldConfig, targetObj, targetFieldName, record, 
                     targetObj[targetFieldName][fieldConfig['jetengine-option']] = true;
                 };
             } else {
-                targetObj[targetFieldName] = null;
+                targetObj[targetFieldName] = "";
             }
             break;
         case 'richText':
             if (value && value.length > 0) {
                 targetObj[targetFieldName] = markdownToHtml(rawValue);
             } else {
-                targetObj[targetFieldName] = null;
+                targetObj[targetFieldName] = "";
             }
             break;
         default: // 'singleLineText', 'multilineText', 'email', 'url', 'singleSelect', 'phoneNumber', 'rollup', 'date, 'dateTime'
             if (value && value.length > 0) {
                 targetObj[targetFieldName] = value;
             } else {
-                targetObj[targetFieldName] = null;
+                targetObj[targetFieldName] = "";
             }
             break;
     };
