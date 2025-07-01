@@ -218,7 +218,7 @@ let defaultParams = {
                     },
 
                     'cpt_members_style': {
-                        'field': 'fldBRkOYenTJaaqoG', // Styles musicaux CQM
+                        'field': 'fldBRkOYenTJaaqoG', // Styles musicaux
                         'model': 'cpt_members_style'
                     },
 
