@@ -142,26 +142,46 @@ Ouvrez la fenêtre d'édition de code, supprimez le contenu par défaut et copie
 
 ````
 let defaultParams = {
-    '{{ID de la table}}': { // {{Nom de la table}}
+    'tbl...': { // ID du tableau contenant les éléments à synchroniser
         airtable: {
-            table: 'ID de la table', // {{Nom de la table}}
-            wpIdField: '{{ID du champ contenant l'identifiant wordpress}}', // {{Nom du champ contenant l'identifiant wordpress}} (facultatif)
-            wpUrlField: '' // facultatif
-            ...
+            table: 'tbl...', // ID du tableau contenant les éléments à synchroniser
+            wpIdField: 'fld...', // ID du champ ID Wordpress (facultatif)
+            wpUrlField: 'fld...', // ID du champ URL Wordpress (facultatif)
+            titleField: 'fld...', // ID du champ contenant le titre pour le post wordpress
+            metaFieldName: 'fld...', // ID du champ Meta
+            lastSyncFieldName: 'fld...', // ID du champ Date de synchronisation
         },
         wordpress: {
+
             cpt_system: 'jetengine', // Inclure cette ligne seulement si vous utilisez JetEngine de Crocobloc
-            postType: '{{Nom du post type appropié pour cette table dans Wordpress}}',
+            postType: '...', // Nom du post type appropié pour cet élément dans Wordpress
+            status : 'publish',
+
+            'featured_media': 'fld...', // ID du champ contenant la photo principale de l'élément (facultatif)
+            'content': 'fld...', // ID du champ contenant la description de l'élément (facultatif)
+
             acf: {
-                    '{{Nom du champ dans Wordpress}}': '{{ID du champ dans Airtable}}', // {{Nom du champ dans Airtable}}
-                    '{{Nom du champ dans Wordpress}}': '{{ID du champ dans Airtable}}', // {{Nom du champ dans Airtable}}
+                    // Lister ici les champs ACF
+
+                    'Nom du champ dans Wordpress...': 'fld...', // ID du champ dans Airtable
+                    'Nom du champ dans Wordpress...': 'fld...', // ID du champ dans Airtable
+                    ...
+
+            },
+
+            meta: {
+
+                    // Lister ici les champs Meta (JetEngine)
+
+                    'Nom du champ dans Wordpress...': 'fld...', // ID du champ dans Airtable
+                    'Nom du champ dans Wordpress...': 'fld...', // ID du champ dans Airtable
                     ...
             },
-            'content': 'Contenu',
-            'featured_media': 'Photo'
+
         }
     },
-    {{Idem pour les autres tables...}}
+
+    // Répéter cette structure pour chaque tableau à synchroniser.
 }
 
 output.set('defaultParams', JSON.stringify(defaultParams));
@@ -170,7 +190,7 @@ output.set('defaultParams', JSON.stringify(defaultParams));
 
 Ce script contient simplement un objet dont les clés correspondent aux noms des tables, et les valeurs contiennent un objet de configuration. 
 
-Remplacez tous les {{placeholders}} par les informations provenant de votre base de données.
+Remplacez tous les "..." par les informations provenant de votre base de données.
 
 > **Note:** Nous utilisons les IDs des tables Airtable et les ID des champs Airtable au lieu de leur nom afin de rendre le script résilient au renommage des champs et des tables. Cela rend par contre le script plus difficile à lire, c'est pourquoi nous ajoutons les noms des tables et des champs en commentaire sur chaque ligne où ils sont référencés. Vous pouvez choisir d'utiliser les noms des tables et les noms des champs au lieu des IDs. 
 
