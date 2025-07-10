@@ -450,6 +450,7 @@ if (params.syncType == 'record') {
 
 async function main()  {
     // do the actual sync on all relevant records
+    let recordsMeta = [];
     for (let record of records) {
         let meta = getMeta(record);
         let wordpressPostId = (meta.wordPressResponse && meta.wordPressResponse.id) || '';
@@ -516,9 +517,12 @@ async function main()  {
         if (lastSyncFieldName) updateParams[lastSyncFieldName] = response.modified_gmt + 'Z'; // the WordPress response does not include Z!
         if (wordPressMediaIdFieldName) updateParams[wordPressMediaIdFieldName] = meta['attachments'] && Object.keys(meta['attachments']).map((att) => meta['attachments'][att].wordPressMediaId).join(',');
         await table.updateRecordAsync(record, updateParams);
+        recordsMeta.push(meta);
     }
-
     console.log("Terminé");
+    return recordsMeta;
 }
 
-main();
+var recordsMeta = await main();
+
+output.set('meta', JSON.stringify(recordsMeta));
