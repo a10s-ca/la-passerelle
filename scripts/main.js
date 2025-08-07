@@ -368,7 +368,22 @@ async function buildBodyParams(fieldConfig, targetObj, targetFieldName, record, 
                     targetObj[targetFieldName] = value;
                 }
             } else {
-                targetObj[targetFieldName] = "";
+                targetObj[targetFieldName] = null;
+            }
+            if (field.options && field.options.result && field.options.result.type == 'checkbox') {
+                if (value) {
+                    targetObj[targetFieldName] = value;
+                    if (params.wordpress.cpt_system && params.wordpress.cpt_system == 'jetengine' && fieldConfig['jetengine-type'] == 'checkbox') {
+                        targetObj[targetFieldName] = {};
+                        targetObj[targetFieldName][fieldConfig['jetengine-option']] = true;
+                    };
+                } else {
+                    targetObj[targetFieldName] = null;
+                    if (params.wordpress.cpt_system && params.wordpress.cpt_system == 'jetengine' && fieldConfig['jetengine-type'] == 'checkbox') {
+                        targetObj[targetFieldName] = {};
+                        targetObj[targetFieldName][fieldConfig['jetengine-option']] = false;
+                    };
+                }
             }
             break;
         case 'date':
@@ -391,7 +406,11 @@ async function buildBodyParams(fieldConfig, targetObj, targetFieldName, record, 
                     targetObj[targetFieldName][fieldConfig['jetengine-option']] = true;
                 };
             } else {
-                targetObj[targetFieldName] = "";
+                targetObj[targetFieldName] = null;
+                if (params.wordpress.cpt_system && params.wordpress.cpt_system == 'jetengine' && fieldConfig['jetengine-type'] == 'checkbox') {
+                    targetObj[targetFieldName] = {};
+                    targetObj[targetFieldName][fieldConfig['jetengine-option']] = false;
+                };
             }
             break;
         case 'richText':
