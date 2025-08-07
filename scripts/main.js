@@ -32,6 +32,16 @@ function b2a(a) {
   return m = n.join(""), o = a.length % 3, (o ? m.slice(0, o - 3) :m) + "===".slice(o || 3);
 }
 
+// utility function for logging info on the script progress
+const emojiMap = { 'info': '☝', 'warning': '⚠', 'error': '‼', 'debug': '🐛'};
+function log(message, obj = null, logType = "info") {
+    let emoji = emojiMap[logType];
+    console.log(emoji + " " + message);
+    if (obj) {
+        console.log(obj);
+    }
+}
+
 // wrapper for WordPress post API
 async function postToWordPress(postType, wordpressPostId, title, content, featuredMedia, otherBodyParams) {
     var bodyBase = {
@@ -50,14 +60,12 @@ async function postToWordPress(postType, wordpressPostId, title, content, featur
         }
     };
 
-    console.log("REQUËTE");
-    console.log(APIBASE + postType + "/" + wordpressPostId);
-    console.log(request);
+    log("Écriture dans WordPress sur " + APIBASE + postType + "/" + wordpressPostId + " -- Requête:", request);
 
     let createdPost = await fetch(APIBASE + postType + "/" + wordpressPostId, request);
-    console.log(createdPost);
+    log("Objet WordPress créé", createdPost);
     let response = await createdPost.json();
-    console.log(response);
+    log("Réponse de l'API WordPress", response);
     return response;
 }
 
@@ -448,24 +456,25 @@ async function buildBodyParamsRecursive(input, target, record, meta) {
 // determing which records should be synced
 // TODO validate other parameters before starting?
 let table = base.getTable(params.airtable.table);
+log("Table ciblée", table);
 let records = [];
 if (params.syncType == 'record') {
-    console.log("Type de synchronisation: record (un seul enregistrement)");
+    log("Type de synchronisation: record (un seul enregistrement)")
     let record = await table.selectRecordAsync(params.airtable.recordId);
     records = [record];
 } else if (params.syncType == 'table') {
-    console.log("Type de synchronisation: table (la table en entier)");
+    log("Type de synchronisation: table (la table en entier)");
     let query = await table.selectRecordsAsync();
     records = query.records;
 } else if (params.syncType == 'view') {
-    console.log("Type de synchronisation: view (une vue)");
+    log("Type de synchronisation: view (une vue)");
     let view = await table.getView(params.airtable.view);
     let query = await view.selectRecordsAsync();
     records = query.records;
 } else {
-    console.log("Type de synchronisation inconnue (rien ne sera synchronisé.");
+    log("Type de synchronisation inconnue (rien ne sera synchronisé.", null, 'error');
 };
-
+log("Les records qui seront synchronisés:", records);
 
 async function main()  {
     // do the actual sync on all relevant records
@@ -523,9 +532,10 @@ async function main()  {
         };
         otherBodyParams.meta = wpMetaFields;
 
+        log("Paramètres préparés pour l'API WordPress", params);
+
         // perform the actual update to WordPress
         let response = await postToWordPress(params.wordpress.postType, wordpressPostId, title, content, featuredMedia, otherBodyParams)
-        console.log(response);
 
         // update meta information in the record, as well as optional fields for details
         meta.wordPressResponse = response;
@@ -538,7 +548,7 @@ async function main()  {
         await table.updateRecordAsync(record, updateParams);
         recordsMeta.push(meta);
     }
-    console.log("Terminé");
+    log("Synchronisation terminée.");
     return recordsMeta;
 }
 
