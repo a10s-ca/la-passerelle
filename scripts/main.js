@@ -171,13 +171,22 @@ async function deleteWordPressMedia(mediaId) {
     return response;
 }
 
+
+async function findOrCreateWordpressAttachments(table, record, fieldName, meta) {
+    let medias = record.getCellValue(fieldName);
+    log("Synchronisation de medias", medias)
+    for (const mediaIndex in medias) {
+        let fakeFieldName = fieldName + "." + mediaIndex;
+        let newMeta = await findOrCreateWordpressAttachment(medias[mediaIndex], fakeFieldName, meta);
+        meta = newMeta;
+    }
+    return meta;
+}
+
 // wrapper for WordPress media API, including business logic for updates
 // returns updated meta for the field
-async function findOrCreateWordpressAttachment(table, record, fieldName, meta) {
-    let medias = record.getCellValue(fieldName);
-    let media = null;
-    if (medias && medias.length > 0) media = medias[0]; // we use the first attachment only; support for galleries may be implemented later
-
+async function findOrCreateWordpressAttachment(media, fieldName, meta) {
+    log("Synchronisation du media ", media)
     // Figure out if we already have created the media in WordPress, and whether it has
     // changed since then
     if (!meta.attachments) meta.attachments = {};
@@ -334,6 +343,28 @@ function markdownToHtml(markdown) {
   return markdown;
 }
 
+// This function is required because we fake fieldNames with indexes in order
+// to hanlde fields with multiple attachments (each attachement gets an indexed entry
+// in the meta)
+function getAttachmentsIdsForField(airtableFieldName, meta, record) {
+    if (meta.attachments) {
+        let res = [];
+        let recordRemainingAttachements = (record.getCellValue(airtableFieldName) || []).map((media) => media.id)
+        Object.keys(meta.attachments).forEach((attachmentKey) => {
+            if (attachmentKey.includes(airtableFieldName) && recordRemainingAttachements.includes(meta.attachments[attachmentKey].airtableMediaId)) res.push(meta.attachments[attachmentKey].wordPressMediaId);
+            // we check first check if we are iterating on attachements for the current field
+            // but also need to check if the attachments in our meta still exist in the record; they could have been
+            // removed but the meta was not fixed following to that removal.
+        })
+        if (res.length > 0) {
+            return res;
+        } else {
+            return null;
+        }
+
+    }
+    else return null;
+};
 
 // Finds the configs for fiedlName in the script params, and writes the
 // corresponding values in targetObj, which is structured to be used in the
@@ -355,10 +386,10 @@ async function buildBodyParams(fieldConfig, targetObj, targetFieldName, record, 
     let rawValue = record.getCellValue(airtableFieldName); // we need this for richText fields
     switch(field.type) {
         case 'multipleAttachments':
-            let newMeta = await findOrCreateWordpressAttachment(table, record, airtableFieldName, meta);
+            let newMeta = await findOrCreateWordpressAttachments(table, record, airtableFieldName, meta);
             if (newMeta) {
                 meta = newMeta;
-                targetObj[targetFieldName] = meta.attachments[airtableFieldName] && meta.attachments[airtableFieldName].wordPressMediaId;
+                targetObj[targetFieldName] = getAttachmentsIdsForField(airtableFieldName, meta, record);
             }
             // TODO: else?
             // TODO we could make this cleaner by passing the value-as-reference meta var to findOrCreateWordpressAttachment and deal with updating meta within that function
@@ -391,6 +422,13 @@ async function buildBodyParams(fieldConfig, targetObj, targetFieldName, record, 
                         targetObj[targetFieldName] = {};
                         targetObj[targetFieldName][fieldConfig['jetengine-option']] = false;
                     };
+                }
+            }
+            if (field.options && field.options.result && field.options.result.type == 'multipleAttachments') {
+                let newMeta = await findOrCreateWordpressAttachments(table, record, airtableFieldName, meta);
+                if (newMeta) {
+                    meta = newMeta;
+                    targetObj[targetFieldName] = getAttachmentsIdsForField(airtableFieldName, meta, record);
                 }
             }
             break;
@@ -500,11 +538,13 @@ async function main()  {
             let airtableFieldName = params.wordpress.featured_media;
             let field = table.getField(airtableFieldName);
             if (field.type == 'multipleAttachments') {
-                let newMeta = await findOrCreateWordpressAttachment(table, record, airtableFieldName, meta);
+                let newMeta = await findOrCreateWordpressAttachments(table, record, airtableFieldName, meta);
                 if (newMeta) {
                     meta = newMeta;
-                    featuredMedia = meta.attachments[airtableFieldName] && meta.attachments[airtableFieldName].wordPressMediaId;
-                };
+                    let featuredMedias = getAttachmentsIdsForField(airtableFieldName, meta, record);
+                    if (featuredMedias && featuredMedias.length > 0) featuredMedia = featuredMedias[0];
+                    // we need [0] because featuredMedia is a single image dans the method returns an array
+                }
             } else {
                 featuredMedia = parseInt(record.getCellValue(params.wordpress.featured_media));
             }
