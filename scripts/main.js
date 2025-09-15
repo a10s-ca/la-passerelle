@@ -135,7 +135,7 @@ function mediaFileName(media) {
 };
 
 // wrapper for WordPress Media API upload only
-async function postMediaToWordPress(media) {
+async function postMediaToWordPress(media, mediaInfo) {
     // download the image
     let imageResponse = await fetch(media.url);
     let content = await imageResponse.blob();
@@ -157,6 +157,20 @@ async function postMediaToWordPress(media) {
     return response;
 }
 
+async function updateMediaInfo(mediaId, mediaInfo) {
+    let request = {
+        method: 'POST',
+        body: JSON.stringify(mediaInfo),
+        headers: {
+            'Authorization': "Basic " + b2a(WORDPRESSUSERNAME + ":" + APPLICATIONPASSWORD),
+            'Content-Type': 'application/json'
+        }
+    };
+    let mediaInfoUpdate = await fetch(APIBASE + "media/" + mediaId, request);
+    let response = await mediaInfoUpdate.json();
+    return response;
+}
+
 // wrapper for WordPress media API deletion
 async function deleteWordPressMedia(mediaId) {
     let request = {
@@ -172,12 +186,12 @@ async function deleteWordPressMedia(mediaId) {
 }
 
 
-async function findOrCreateWordpressAttachments(table, record, fieldName, meta) {
+async function findOrCreateWordpressAttachments(table, record, fieldName, meta, mediaInfo) {
     let medias = record.getCellValue(fieldName);
     log("Synchronisation de medias", medias)
     for (const mediaIndex in medias) {
         let fakeFieldName = fieldName + "." + mediaIndex;
-        let newMeta = await findOrCreateWordpressAttachment(medias[mediaIndex], fakeFieldName, meta);
+        let newMeta = await findOrCreateWordpressAttachment(medias[mediaIndex], fakeFieldName, meta, mediaInfo);
         meta = newMeta;
     }
     return meta;
@@ -185,7 +199,7 @@ async function findOrCreateWordpressAttachments(table, record, fieldName, meta) 
 
 // wrapper for WordPress media API, including business logic for updates
 // returns updated meta for the field
-async function findOrCreateWordpressAttachment(media, fieldName, meta) {
+async function findOrCreateWordpressAttachment(media, fieldName, meta, mediaInfo) {
     log("Synchronisation du media ", media)
     // Figure out if we already have created the media in WordPress, and whether it has
     // changed since then
@@ -195,7 +209,7 @@ async function findOrCreateWordpressAttachment(media, fieldName, meta) {
     let action = '';
     if (typeof attachment == 'undefined' && media) {
         action = 'create';
-    } else if (media && attachment && attachment.airtableMediaId != media.id) {
+    } else if (media && attachment && (attachment.airtableMediaId != media.id)) {
         action = 'update';
     } else if (attachment && attachment.airtableMediaId && !media) {
         action = 'delete';
@@ -203,13 +217,15 @@ async function findOrCreateWordpressAttachment(media, fieldName, meta) {
         action = 'nothing';
     }
 
+    log("Action", action);
+
     // For create or update actions, we need to create a new image in the WordPress media library,
     // because the WordPress API does not allow updating the actual file in a media (the REST API
     // doc is not clear about that, but all requests I tried did not change the media, and I saw
     // comments from people with a similar problem on the web)
     if (['create', 'update'].includes(action)) {
         // upload the image to Wordpress
-        let response = await postMediaToWordPress(media);
+        let response = await postMediaToWordPress(media, mediaInfo);
 
         // update the record with the new meta
         meta.attachments[fieldName] = { airtableMediaId: media.id, wordPressMediaId: response.id };
@@ -224,13 +240,15 @@ async function findOrCreateWordpressAttachment(media, fieldName, meta) {
         await deleteWordPressMedia(oldAttachementWordPressMediaId);
         delete meta.attachments[fieldName];
         return meta;
-
-    // if the image has not changed, we have nothing to do, but still want to return the media id
-    } else if (action == 'nothing') {
-        return meta;
     }
 
-    return null; // should not happen; all previous ifs end with a return
+    // in all cases, if we have mediaInfo, we update it
+    if (mediaInfo && (Object.keys(mediaInfo).length > 0) && attachment.wordPressMediaId) {
+        log('Mise à jour des informations sur le media', mediaInfo);
+        await updateMediaInfo(attachment.wordPressMediaId, mediaInfo);
+    }
+
+    return meta;
 }
 
 // This functions will find or create the ID of a "term" in a related "model". The "model"
@@ -351,10 +369,11 @@ function getAttachmentsIdsForField(airtableFieldName, meta, record) {
         let res = [];
         let recordRemainingAttachements = (record.getCellValue(airtableFieldName) || []).map((media) => media.id)
         Object.keys(meta.attachments).forEach((attachmentKey) => {
-            if (attachmentKey.includes(airtableFieldName) && recordRemainingAttachements.includes(meta.attachments[attachmentKey].airtableMediaId)) res.push(meta.attachments[attachmentKey].wordPressMediaId);
+            if (attachmentKey.includes(airtableFieldName&".") && recordRemainingAttachements.includes(meta.attachments[attachmentKey].airtableMediaId)) res.push(meta.attachments[attachmentKey].wordPressMediaId);
             // we check first check if we are iterating on attachements for the current field
             // but also need to check if the attachments in our meta still exist in the record; they could have been
             // removed but the meta was not fixed following to that removal.
+            // &"." is there so that we check only the new format keys and skip the old format (when we did not support multiple attachments)
         })
         if (res.length > 0) {
             return res;
@@ -386,7 +405,7 @@ async function buildBodyParams(fieldConfig, targetObj, targetFieldName, record, 
     let rawValue = record.getCellValue(airtableFieldName); // we need this for richText fields
     switch(field.type) {
         case 'multipleAttachments':
-            let newMeta = await findOrCreateWordpressAttachments(table, record, airtableFieldName, meta);
+            let newMeta = await findOrCreateWordpressAttachments(table, record, airtableFieldName, meta, wordpressDetails.media_info);
             if (newMeta) {
                 meta = newMeta;
                 targetObj[targetFieldName] = getAttachmentsIdsForField(airtableFieldName, meta, record);
@@ -425,7 +444,7 @@ async function buildBodyParams(fieldConfig, targetObj, targetFieldName, record, 
                 }
             }
             if (field.options && field.options.result && field.options.result.type == 'multipleAttachments') {
-                let newMeta = await findOrCreateWordpressAttachments(table, record, airtableFieldName, meta);
+                let newMeta = await findOrCreateWordpressAttachments(table, record, airtableFieldName, meta, wordpressDetails.media_info);
                 if (newMeta) {
                     meta = newMeta;
                     targetObj[targetFieldName] = getAttachmentsIdsForField(airtableFieldName, meta, record);
@@ -514,6 +533,17 @@ if (params.syncType == 'record') {
 };
 log("Les records qui seront synchronisés:", records);
 
+function getFeaturedMediaInfo(params, record) {
+    let res = {};
+    if (params.featured_media_info) {
+        Object.keys(params.featured_media_info).forEach((info) => {
+            let value = record.getCellValueAsString(params.featured_media_info[info]);
+            res[info] = value
+        });
+    }
+    return res;
+};
+
 async function main()  {
     // do the actual sync on all relevant records
     let recordsMeta = [];
@@ -535,10 +565,11 @@ async function main()  {
             };
         };
         if (params.wordpress && params.wordpress.featured_media) {
+            let featuredMediaInfo = getFeaturedMediaInfo(params.wordpress, record);
             let airtableFieldName = params.wordpress.featured_media;
             let field = table.getField(airtableFieldName);
             if (field.type == 'multipleAttachments') {
-                let newMeta = await findOrCreateWordpressAttachments(table, record, airtableFieldName, meta);
+                let newMeta = await findOrCreateWordpressAttachments(table, record, airtableFieldName, meta, featuredMediaInfo);
                 if (newMeta) {
                     meta = newMeta;
                     let featuredMedias = getAttachmentsIdsForField(airtableFieldName, meta, record);
@@ -551,7 +582,7 @@ async function main()  {
         };
 
         // prepare other body params for the WP REST API call (anything that is not title, content, media, ACF, etc.)
-        let baseParams = ['postType', 'titleField', 'content', 'featured_media', 'status', 'acf', 'meta', 'cpt_system'];
+        let baseParams = ['postType', 'titleField', 'content', 'featured_media', 'featured_media_info', 'status', 'acf', 'meta', 'cpt_system'];
         let otherBodyParams = {};
         for (const fieldName of Object.keys(params.wordpress).filter(value => !baseParams.includes(value))) {
             await buildBodyParams(params.wordpress[fieldName], otherBodyParams, fieldName, record, meta);

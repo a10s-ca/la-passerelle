@@ -49,8 +49,9 @@ Pour tous les types de contenus (articles, pages ou types de contenus personnali
 * `params.wordpress.featured_media`: le choix du média principal du «post», sous la forme de soit:
      * l'identifiant numérique du média WordPress, dans un champ texte ou nombre
      * une image, dans un champs de pièce jointe Airtable
+* `params.wordpress.featured_media_info`: un objet qui permet de passer des informations supplémentaires sur le média, notamment les clés `caption`, `alt_text` et `description`.
 
-Dans le cas des types de contenus personnalisés («custom post types» (CPT)) qui utilisent des champs avancés («advanced custom fields» (ACF)), la clé `params.wordpress.acf` permet de spécifier les correspondances. 
+Dans le cas des types de contenus personnalisés («custom post types» (CPT)) qui utilisent des champs avancés («advanced custom fields» (ACF)), la clé `params.wordpress.acf` permet de spécifier les correspondances.
 
 *Si vous utilisez plutôt JetEngine de Crocoblock avec les champs meta personnalisés («custom meta fields» (CMF)), la clé params.wordpress.meta permet de spécifier les correspondances.*
 
@@ -244,7 +245,9 @@ let defaultParams = {
            status: 'publish',
            content: 'fldCQy1GfABiQTeyx', // Description (FR)
            featured_media: 'fldCvFZ0V8mjK6xsx', // Photo principale'
-
+           featured_media_info: {
+                alt_text: 'fldCvFZ0V8mjK6asd', // Text alternatif de la photo principale
+           },
            acf: {
 
                'description': "fldCQy1GfABiQTeyx",
