@@ -229,17 +229,15 @@ async function findOrCreateWordpressAttachment(media, fieldName, meta, mediaInfo
 
         // update the record with the new meta
         meta.attachments[fieldName] = { airtableMediaId: media.id, wordPressMediaId: response.id };
+        attachment = meta.attachments[fieldName];
 
         // if we are updating a post (ie. changing the image), then we delete the old attachment
         if (action == 'update') await deleteWordPressMedia(oldAttachementWordPressMediaId)
           // TODO : make deletion decision based on an option?
 
-        return meta;
-
     } else if (action == 'delete') {
         await deleteWordPressMedia(oldAttachementWordPressMediaId);
         delete meta.attachments[fieldName];
-        return meta;
     }
 
     // in all cases, if we have mediaInfo, we update it
