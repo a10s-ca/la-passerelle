@@ -283,7 +283,9 @@ async function findOrCreateRelatedModels(field, record, wordpressDetails, meta) 
             };
             break;
         case 'multipleLookupValues':
-            for (const term of (record.getCellValue(field) || [])) {
+            let terms = (record.getCellValue(field) || []);
+            if (wordpressDetails.forceStrings) terms = (record.getCellValueAsString(field).split(',') || []);
+            for (const term of terms) {
                 // lookup could be actual records, or simply WordPress post ids
                 // so the logic here is to check if we have ints, we assume they are
                 // WP post ids and use them directly; otherwise we try to find or create
@@ -407,7 +409,7 @@ async function buildBodyParams(fieldConfig, targetObj, targetFieldName, record, 
         airtableFieldName = fieldConfig;
     } else {
         airtableFieldName = fieldConfig.field;
-        wordpressDetails.model = fieldConfig.model;
+        wordpressDetails = fieldConfig;
     }
 
     // get the Airtable field and process it
@@ -579,7 +581,7 @@ async function main()  {
             let featuredMediaInfo = getFeaturedMediaInfo(params.wordpress, record);
             let airtableFieldName = params.wordpress.featured_media;
             let field = table.getField(airtableFieldName);
-            if (field.type == 'multipleAttachments') {
+            if ((field.type == 'multipleAttachments') || (field.options && field.options.result && field.options.result.type == 'multipleAttachments')) {
                 let newMeta = await findOrCreateWordpressAttachments(table, record, airtableFieldName, meta, featuredMediaInfo);
                 if (newMeta) {
                     meta = newMeta;
