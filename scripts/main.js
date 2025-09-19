@@ -319,25 +319,28 @@ function markdownToHtml(markdown) {
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;");
 
+  // Restore autolink-style URLs like <https://example.com>
+  markdown = markdown.replace(/&lt;(https?:\/\/[^&]+)&gt;/g, '<a href="$1">$1</a>');
+
   // Code blocks (```code```)
   markdown = markdown.replace(/```([\s\S]*?)```/g, "<pre><code>$1</code></pre>");
 
   // Inline code (`code`)
   markdown = markdown.replace(/`([^`\n]+)`/g, "<code>$1</code>");
 
+  // Blockquotes
+  markdown = markdown.replace(/^> (.*)$/gm, "<blockquote>$1</blockquote>");
+
   // Headings
   markdown = markdown.replace(/^### (.*)$/gm, "<h3>$1</h3>");
   markdown = markdown.replace(/^## (.*)$/gm, "<h2>$1</h2>");
   markdown = markdown.replace(/^# (.*)$/gm, "<h1>$1</h1>");
 
-  // Blockquotes
-  markdown = markdown.replace(/^> (.*)$/gm, "<blockquote>$1</blockquote>");
-
   // Numbered lists
   markdown = markdown.replace(/^\d+\. (.*)$/gm, "<li>$1</li>");
   markdown = markdown.replace(/(<li>.*<\/li>)/gms, "<ol>$1</ol>");
 
-  // Bulleted lists
+  // Bullet lists
   markdown = markdown.replace(/^[-*] (.*)$/gm, "<li>$1</li>");
   markdown = markdown.replace(/(<li>.*<\/li>)/gms, "<ul>$1</ul>");
 
@@ -345,12 +348,22 @@ function markdownToHtml(markdown) {
   markdown = markdown.replace(/\[ \] (.*)/g, '<input type="checkbox" disabled> $1');
   markdown = markdown.replace(/\[x\] (.*)/gi, '<input type="checkbox" checked disabled> $1');
 
-  // Bold, italic, strikethrough
+  // Bold + italic combined
+  markdown = markdown.replace(/\*\*_(.*?)_\*\*/g, "<strong><em>$1</em></strong>");
+  markdown = markdown.replace(/_\*\*(.*?)\*\*_/g, "<em><strong>$1</strong></em>");
+
+  // Bold
   markdown = markdown.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+  markdown = markdown.replace(/__(.*?)__/g, "<strong>$1</strong>");
+
+  // Italic
   markdown = markdown.replace(/\*(.*?)\*/g, "<em>$1</em>");
+  markdown = markdown.replace(/_(.*?)_/g, "<em>$1</em>");
+
+  // Strikethrough
   markdown = markdown.replace(/~~(.*?)~~/g, "<del>$1</del>");
 
-  // Links
+  // Links [text](url)
   markdown = markdown.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
 
   // Line breaks
