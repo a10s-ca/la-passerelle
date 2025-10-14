@@ -382,7 +382,7 @@ function getAttachmentsIdsForField(airtableFieldName, meta, record) {
         let res = [];
         let recordRemainingAttachements = (record.getCellValue(airtableFieldName) || []).map((media) => media.id)
         Object.keys(meta.attachments).forEach((attachmentKey) => {
-            if (attachmentKey.includes(airtableFieldName&".") && recordRemainingAttachements.includes(meta.attachments[attachmentKey].airtableMediaId)) res.push(meta.attachments[attachmentKey].wordPressMediaId);
+            if (attachmentKey.includes(airtableFieldName+".") && recordRemainingAttachements.includes(meta.attachments[attachmentKey].airtableMediaId)) res.push(meta.attachments[attachmentKey].wordPressMediaId);
             // we check first check if we are iterating on attachements for the current field
             // but also need to check if the attachments in our meta still exist in the record; they could have been
             // removed but the meta was not fixed following to that removal.
