@@ -71,12 +71,14 @@ async function postToWordPress(postType, wordpressPostId, title, content, featur
 
 // Generic wrapper for WordPress API for any "model" (post type or taxonomy) that has "terms" (post
 // or term) with a name. Returns the ID. Mostly used for relation fields.
-async function postOrFindModelTermToWordpress(modelName, term) {
+async function postOrFindModelTermToWordpress(modelName, term, lang) {
+    log('Synchronisation du terme dans une taxoomie', { 'taxo': modelName, 'terme': term, 'lang': lang })
+    let body = {
+            "name": term
+        };
     let request = {
         method: 'POST',
-        body: JSON.stringify({
-            "name": term
-        }),
+        body: JSON.stringify(body),
         headers: {
             'Authorization': "Basic " + b2a(WORDPRESSUSERNAME + ":" + APPLICATIONPASSWORD),
             'Content-Type': 'application/json'
@@ -89,6 +91,8 @@ async function postOrFindModelTermToWordpress(modelName, term) {
         // > we need .replaceAll('-', '_') because taxonomy names can contain dashes, but not API routes
         // I am not sure but this probably only applies to ACF, so not enforcing it for JetEngine
     let url = APIBASE + safeModelName;
+    if (lang) url = url + '?lang=' + lang;
+    log('Appel à ' + url + ' avec la requête', request)
     let createdTerm = await fetch(url, request);
     let response = await createdTerm.json();
 
@@ -252,7 +256,7 @@ async function findOrCreateWordpressAttachment(media, fieldName, meta, mediaInfo
 // This functions will find or create the ID of a "term" in a related "model". The "model"
 // can either be a custom post type, or a taxonmy (they are handled in the same way by the
 // WordPress REST API).
-async function findOrCreateModelTermId(modelName, term, meta) {
+async function findOrCreateModelTermId(modelName, term, meta, lang) {
     if (!meta['models']) meta['models'] = {};
     if (!meta['models'][modelName]) {
         meta['models'][modelName] = {};
@@ -273,12 +277,13 @@ async function findOrCreateModelTermId(modelName, term, meta) {
 // be used to manage relations in general, and has been tested with taxonomies.
 async function findOrCreateRelatedModels(field, record, wordpressDetails, meta) {
     let modelName = wordpressDetails.model;
+    let lang = wordpressDetails.lang;
     let res = [];
     switch(field.type) {
         case 'multipleSelects':
         case 'multipleRecordLinks':
             for (const term of (record.getCellValue(field) || [])) {
-                let id = await findOrCreateModelTermId(modelName, term.name, meta);
+                let id = await findOrCreateModelTermId(modelName, term.name, meta, lang);
                 res.push(id);
             };
             break;
@@ -293,7 +298,7 @@ async function findOrCreateRelatedModels(field, record, wordpressDetails, meta) 
                 let candidateId = parseInt(term);
                 let id = candidateId;
                 if (isNaN(candidateId)) {
-                    id = await findOrCreateModelTermId(modelName, term, meta);
+                    id = await findOrCreateModelTermId(modelName, term, meta, lang);
                 }
                 await res.push(id);
             };
@@ -303,7 +308,7 @@ async function findOrCreateRelatedModels(field, record, wordpressDetails, meta) 
         case 'singleLineText':
             let term = record.getCellValueAsString(field);
             if (term && term.length > 0) {
-                let id = await findOrCreateModelTermId(modelName, term, meta);
+                let id = await findOrCreateModelTermId(modelName, term, meta, lang);
                 await res.push(id);
             }
             break;
@@ -393,7 +398,6 @@ function getAttachmentsIdsForField(airtableFieldName, meta, record) {
         } else {
             return null;
         }
-
     }
     else return null;
 };
