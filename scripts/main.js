@@ -386,7 +386,7 @@ function getAttachmentsIdsForField(airtableFieldName, meta, record) {
             // we check first check if we are iterating on attachements for the current field
             // but also need to check if the attachments in our meta still exist in the record; they could have been
             // removed but the meta was not fixed following to that removal.
-            // &"." is there so that we check only the new format keys and skip the old format (when we did not support multiple attachments)
+            // +"." is there so that we check only the new format keys and skip the old format (when we did not support multiple attachments)
         })
         if (res.length > 0) {
             return res;
