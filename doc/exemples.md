@@ -51,15 +51,15 @@ Quand "Forcer la synchronisation La Passerelle" est n'importe laquelle des valeu
 
 Groupe conditionnel 1 - Si "Forcer la synchronisation La Passerelle" contient "publish"
 
-Actions :
-Exécuter un script
-Mettre à jour l'entrée, Champ "Forcer la synchronisation La Passerelle"
+- Actions :
+  - Exécuter un script
+  - Mettre à jour l'entrée, Champ "Forcer la synchronisation La Passerelle"
 
 Groupe conditionnel 2 - Si "Forcer la synchronisation La Passerelle" contient "draft"
 
-Actions :
-Exécuter un script
-Mettre à jour l'entrée, Champ "Forcer la synchronisation La Passerelle"
+- Actions :
+  - Exécuter un script
+  - Mettre à jour l'entrée, Champ "Forcer la synchronisation La Passerelle"
 
 Dans les deux cas, le script sera identique, seul le paramètre d'entrée "wordpressStatus" sera différent.
 
