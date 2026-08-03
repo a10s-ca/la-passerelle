@@ -34,31 +34,40 @@ IF(IF({Date d'échéance de la dernière adhésion}, IF(IS_AFTER(DATEADD({Date d
 
 Lorsque la syncrhonisation se fait de façon automatique, par exemple dans le cas d'un répertoire des membres où une adhésion valide entraine automatiquement la publication sur le site Wordpress, il peut être utile de pouvoir forcer la synchronisation, pour faire des test ou du débuggage.
 
-Champs à ajouter :
-- Statut wordpress (type : Formule)
-````
-IF({Meta}, REGEX_EXTRACT({Meta},'"status":"([a-z]+)"'))
-````
+Champ à ajouter :
   
 - Forcer la synchronisation (type : Sélection unique)
-  - ▶️ forcer la synchronisation
+  - ▶️ forcer la synch - publish
+  - ▶️ forcer la synch - draft
   - ⏳ synchronisation lancée
   - ✅ synchronisation terminée
 
-Automatisations à ajouter (une par table)
+Automatisation à ajouter (une par table) :
 
 Déclencheur : lorsqu'une entrée correspond aux conditions
-Quand "Forcer la synchronisation La Passerelle" est "▶️ forcer la synchronisation"
+Quand "Forcer la synchronisation La Passerelle" est n'importe laquelle des valeurs : 
+  - ▶️ forcer la synch - publish
+  - ▶️ forcer la synch - draft
+
+Groupe conditionnel 1 - Si "Forcer la synchronisation La Passerelle" contient "publish"
 
 Actions :
 Exécuter un script
-Mettre à jour l'entrée, Champs "Forcer la synchronisation La Passerelle"
+Mettre à jour l'entrée, Champ "Forcer la synchronisation La Passerelle"
+
+Groupe conditionnel 2 - Si "Forcer la synchronisation La Passerelle" contient "draft"
+
+Actions :
+Exécuter un script
+Mettre à jour l'entrée, Champ "Forcer la synchronisation La Passerelle"
+
+Dans les deux cas, le script sera identique, seul le paramètre d'entrée "wordpressStatus" sera différent.
 
 |Nom|Valeur|
 |----|-----|
 |webhookURL|coller le lien de l'étape 2.1 de l'installation|
 |recordId|ID de l'entrée Airtable|
-|wordpressStatus|champ créé plus tôt|
+|wordpressStatus|soit "publish" ou bien "draft" selon le cas (sans guillemets)|
 |tableId|l'id Airtable de la table contenant les données (commence par tbl)|
 
 ````
@@ -137,6 +146,13 @@ switch(table_id){
     break;
 
 }
+````
+
+## Pour afficher le statut Wordpress dans votre tableau Airtable
+
+Créer un nouveau champ "Statut Wordpress" (type : Formule)
+````
+IF({Meta}, REGEX_EXTRACT({Meta},'"status":"([a-z]+)"'))
 ````
 
 ## [Avancé] Pour utiliser les extensions
