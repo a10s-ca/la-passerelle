@@ -37,8 +37,8 @@ Lorsque la syncrhonisation se fait de façon automatique, par exemple dans le ca
 Champ à ajouter :
   
 - Forcer la synchronisation (type : Sélection unique)
-  - ▶️ forcer la synch - publish
-  - ▶️ forcer la synch - draft
+  - ▶️ forcer la sync - publish
+  - ▶️ forcer la sync - draft
   - ⏳ synchronisation lancée
   - ✅ synchronisation terminée
 
