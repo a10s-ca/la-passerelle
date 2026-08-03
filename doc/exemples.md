@@ -106,6 +106,7 @@ Mettre à jour l'automatisation principale
 Ajouter une action / Exécuter un script 
 
 |Nom|Valeur|
+|----|-----|
 |params|body/params|
 
 ````javascript
