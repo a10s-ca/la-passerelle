@@ -42,6 +42,21 @@ function log(message, obj = null, logType = "info") {
     }
 }
 
+// returns a copy of a request that is safe to write to logs
+function requestWithoutAuthorizationHeaders(request) {
+    let safeHeaders = {};
+    Object.keys(request.headers || {}).forEach(headerName => {
+        if (headerName.toLowerCase() !== 'authorization') {
+            safeHeaders[headerName] = request.headers[headerName];
+        }
+    });
+
+    return {
+        ...request,
+        headers: safeHeaders
+    };
+}
+
 // wrapper for WordPress post API
 async function postToWordPress(postType, wordpressPostId, title, content, featuredMedia, otherBodyParams) {
     var bodyBase = {
@@ -60,7 +75,7 @@ async function postToWordPress(postType, wordpressPostId, title, content, featur
         }
     };
 
-    log("Écriture dans WordPress sur " + APIBASE + postType + "/" + wordpressPostId + " -- Requête:", request);
+    log("Écriture dans WordPress sur " + APIBASE + postType + "/" + wordpressPostId + " -- Requête:", requestWithoutAuthorizationHeaders(request));
 
     let createdPost = await fetch(APIBASE + postType + "/" + wordpressPostId, request);
     log("Objet WordPress créé", createdPost);
@@ -92,7 +107,7 @@ async function postOrFindModelTermToWordpress(modelName, term, lang) {
         // I am not sure but this probably only applies to ACF, so not enforcing it for JetEngine
     let url = APIBASE + safeModelName;
     if (lang) url = url + '?lang=' + lang;
-    log('Appel à ' + url + ' avec la requête', request)
+    log('Appel à ' + url + ' avec la requête', requestWithoutAuthorizationHeaders(request))
     let createdTerm = await fetch(url, request);
     let response = await createdTerm.json();
 
